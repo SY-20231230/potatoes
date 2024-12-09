@@ -1,0 +1,44 @@
+.sidebar {
+    position: relative;
+    width: 5vw;
+    height: 100vh;
+    z-index: 20;
+    float: left;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: aliceblue;
+}
+
+.img_logo {
+    width: 5vw;
+    height: 10vh;
+    cursor: pointer;
+}
+
+button {
+    display: block;
+    text-align: center;
+    width: 5vw;
+    height: 10vh;
+    cursor: pointer;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.register hr {
+    width: 4vw;
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex-grow: 1;
+}

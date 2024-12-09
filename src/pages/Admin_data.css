@@ -1,0 +1,29 @@
+.admin_data {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    text-align: center;
+}
+
+.event_container {
+    display: flex;
+    justify-content: center;
+}
+
+hr {
+    text-align: center;
+    width: 80vw;
+}
+
+.stack_event {
+    margin: 0 0 5vh 0;
+}
+
+.stack_event span {
+    font-size: 3vh;
+    font-weight: bold;
+}
+
+.event {
+    margin: 2vh 0 4vh 0;
+}

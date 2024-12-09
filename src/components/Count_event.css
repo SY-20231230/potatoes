@@ -1,0 +1,26 @@
+.count_event {
+    border: 0.25vh solid black;
+    @media (min-width: 6vw) {
+        display: flex;
+        max-width: 6vw;
+        text-align: center;
+        flex-direction: column;
+        align-items: center;
+    }
+    border-radius: 1vh;
+    padding: 1vh 3vw 1vh 3vw;
+    margin: 0 2vw 0 2vw;
+}
+
+.count_event p {
+    font-size: 3vh;
+    margin: 0 0 2vh 0;
+}
+
+.count_event b {
+    font-size: 2vh;
+}
+
+.count_event b span {
+    font-size: 3vh;
+}
