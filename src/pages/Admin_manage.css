@@ -1,0 +1,57 @@
+.admin_manage {
+    position: relative;
+    width: 100vw;
+    height: 97vh;
+    z-index: 10;
+}
+
+.data_table {
+    width: 80vw;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.table_head {
+    font-size: 3vh;
+    font-weight: bold;
+    text-align: center;
+    background-color: aliceblue;
+}
+
+.table_body tr td {
+    padding: 0.5vh;
+    border: solid 0.1vh gray;
+}
+
+.table_body .no {
+    font-weight: bold;
+    text-align: center;
+}
+
+.table_body .image {
+    text-align: center;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 0.5vh;
+}
+
+.page_button {
+    color: black;
+    font-size: 2vh;
+}
+
+.page_button.active {
+    font-weight: bold;
+    color: blue;
+    font-size: 2vh;
+}
+
+.page_button:hover {
+    font-weight: bold;
+    color: blue;
+    font-size: 2.5vh;
+
+}

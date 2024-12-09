@@ -1,0 +1,12 @@
+.img_reading_glasses {
+    width: 2vw;
+    height: 3vh;
+    border-radius: 5px;
+}
+
+.search_text {
+    resize: none;
+    height: 2.5vh;
+    font-size: 2vh;
+    border-radius: 5px;
+}

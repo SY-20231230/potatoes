@@ -1,0 +1,20 @@
+.homepage {
+    position: relative;
+    width: 100vw;
+    height: 94vh;
+}
+
+.map-container {
+    position: relative;
+    width: 100vw;
+    height: 94vh;
+}
+
+#search {
+    position: absolute;
+    top: 1vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    resize: none;
+}
