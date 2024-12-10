@@ -1,0 +1,46 @@
+/* 기본 스타일링 */
+@font-face {
+    font-family: 'GowunBatang-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 폰트 적용 */
+body {
+    color: #ffff;
+    font-family: 'GowunBatang-Regular', Arial, sans-serif; /* GowunBatang-Regular 폰트를 우선으로 사용 */
+    background: url('img/008.png') no-repeat center center; /* 배경 이미지 적용 */
+    background-size: 1920px 1080px; /* 배경 이미지를 1920x1080으로 고정 */
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 화면 전체를 사용 */
+    flex-direction: column;
+}
+
+
+/* 로고 스타일 */
+.logo-container {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+}
+
+.logo {
+    width: 150px;
+    height: auto;
+}
+
+/* 푸터 스타일 */
+.footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #ffff;
+}
