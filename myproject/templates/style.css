@@ -1,0 +1,84 @@
+@font-face {
+    font-family: 'DungGeunMo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/DungGeunMo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'GowunBatang-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+/* 전체 스타일 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: white; /* 글자 색상 */
+    background: url('img/008.png') no-repeat center center;
+    background-size: 1920px 1080px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+/* Mini Game 제목 스타일 */
+.title-container h1 {
+    font-family: 'DungGeunMo', sans-serif; /* 둥근모꼴 폰트 적용 */
+    font-size: 10rem; /* 크기 조정 */
+    margin-bottom: 180px; /* 아래 여백 */
+    color: #ffea00; /* 텍스트 색상 노란색 */
+    text-shadow: 4px 4px 10px rgba(0, 0, 0, 1), /* 더 두꺼운 검정색 테두리 효과 */
+                 -4px -4px 10px rgba(0, 0, 0, 1); /* 반대 방향으로도 두껍게 테두리 효과 추가 */
+}
+
+  
+  /* 로고 */
+  .logo-container {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+  }
+  
+  .logo {
+    width: 150px;
+    height: auto;
+  }
+  
+  /* Start 버튼 스타일 */
+  .button-container {
+    position: absolute;
+    bottom: 180px; /* 화면 하단에 위치 */
+    left: 50%; /* 가로 중앙 정렬 */
+    transform: translateX(-50%); /* 정확히 중앙 정렬 */
+    z-index: 2; /* 다른 요소들 위에 표시 */
+  }
+  
+  .start-button {
+    width: 150px; /* 버튼 크기 */
+    height: auto;
+    cursor: pointer; /* 마우스를 올리면 손 모양 */
+    transition: transform 0.3s ease;
+  }
+  
+  .start-button:hover {
+    transform: scale(1.1); /* 마우스 오버 시 버튼 크기 증가 */
+  }
+  
+  /* 푸터 스타일 */
+  .footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: white;
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+  
