@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
+import axios from "axios";
+
 import './Sidebar.css';
 import {IoIosLogIn} from "react-icons/io";
 import {FaRegUserCircle} from "react-icons/fa";
@@ -10,17 +12,50 @@ const Sidebar = () => {
         <sidebar className="sidebar">
             <div className="menu">
                 <div>
-                    <img src="images/road.jpg" className="img_logo" alt=""
-                         onClick={() => window.location.href = 'Homepage'}/>
+                    <img src="images/road.jpg" className="img_logo" alt="" onClick={() => {
+                        axios.post("http://localhost:8000/dorosee/", {
+                            title: "Homepage",
+                            content: "Search, Map"
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }}>
+                    </img>
                 </div>
                 <div>
-                    <button className="login" onClick={() => window.location.href = '#'}>
+                    <button className="login" onClick={() => {
+                        axios.post("http://localhost:8000/dorosee/", {
+                            title: "login",
+                            content: "login"
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }}>
                         <span>길찾기</span>
                         <CiLocationOn/>
                     </button>
                 </div>
                 <div>
-                    <button className="login" onClick={() => window.location.href = '#'}>
+                    <button className="login" onClick={() => {
+                        axios.post("http://localhost:8000/dorosee/", {
+                            title: "login",
+                            content: "login"
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }}>
                         <span>더보기</span>
                         <CiCircleMore/>
                     </button>
@@ -30,14 +65,36 @@ const Sidebar = () => {
             <div className="register">
                 <hr/>
                 <div>
-                    <button className="login" onClick={() => window.location.href = '#'}>
-                        <span>로그인</span>
+                    <button className="Admin_data" onClick={() => {
+                        axios.post("http://localhost:8000/dorosee/admin/data/", {
+                            title: "Admin_data",
+                            content: "data of pothole"
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }}>
+                        <span>Admin_data</span>
                         <IoIosLogIn/>
                     </button>
                 </div>
                 <div>
-                    <button className="join" onClick={() => window.location.href = 'Admin_data'}>
-                        <span>회원가입</span>
+                    <button className="Admin_manage" onClick={() => {
+                        axios.post("http://localhost:8000/dorosee/admin/manage/", {
+                            title: "Admin_manage",
+                            content: "manage data"
+                        })
+                            .then(function (response) {
+                                console.log(response);
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            })
+                    }}>
+                        <span>Admin_manage</span>
                         <FaRegUserCircle/>
                     </button>
                 </div>
@@ -45,7 +102,8 @@ const Sidebar = () => {
 
 
         </sidebar>
-    );
+    )
+        ;
 };
 
 export default Sidebar;
