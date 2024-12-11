@@ -1,8 +1,16 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import './Admin_manage.css';
 import Data from "../Data_admin_manage";
 
 const Admin_manage = () => {
+    useEffect(() => {
+        fetch('http://localhost:3000/DoroSee/Admin/manage/')
+            .then(response => response.json())
+            .then(data => {
+                console.log("관리자 데이터 관리", data);
+            })
+    });
+
     // 페이지당 데이터 수
     const per_page = 10;
 
@@ -40,7 +48,8 @@ const Admin_manage = () => {
                         <td className="no">{start_index + index + 1}</td>
                         <td className="id">{row.col1}</td>
                         <td className="image">
-                            <img src="images/pothole.jpg" alt={`image ${index}`} style={{width: '50px', cursor: 'pointer'}} onClick={row.col2}/></td>
+                            <img src="images/pothole.jpg" alt={`image ${index}`}
+                                 style={{width: '50px', cursor: 'pointer'}} onClick={row.col2}/></td>
                         <td className="damage_type">{row.col3}</td>
                         <td className="status">{row.col4}</td>
                         <td className="time">{row.col5}</td>

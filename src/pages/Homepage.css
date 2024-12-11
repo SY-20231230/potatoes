@@ -1,18 +1,18 @@
 .homepage {
     position: relative;
     width: 100vw;
-    height: 94vh;
+    height: 97vh;
 }
 
 .map-container {
     position: relative;
     width: 100vw;
-    height: 94vh;
+    height: 97vh;
 }
 
 #search {
     position: absolute;
-    top: 1vh;
+    top: 3vh;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
