@@ -4,7 +4,7 @@ import Data from "../Data_admin_manage";
 
 const Admin_manage = () => {
     useEffect(() => {
-        fetch('http://localhost:3000/DoroSee/Admin/manage/')
+        fetch('http://localhost:3000/doroSee/admin/manage/')
             .then(response => response.json())
             .then(data => {
                 console.log("관리자 데이터 관리", data);

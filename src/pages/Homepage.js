@@ -5,7 +5,7 @@ import './Homepage.css';
 
 const Homepage = () => {
     useEffect(() => {
-        fetch('http://localhost:8000/DoroSee/Homepage/')
+        fetch('http://localhost:8000/dorosee/homepage/')
             .then(response => response.json())
             .then(data => {
                 console.log("홈페이지", data);
