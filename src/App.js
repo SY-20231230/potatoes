@@ -10,8 +10,8 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
-                <Route path="/Admin/data" element={<Layout><Admin_data/></Layout>}></Route>
-                <Route path="/Admin/manage" element={<Layout><Admin_manage/></Layout>}></Route>
+                <Route path="/admin/data" element={<Layout><Admin_data/></Layout>}></Route>
+                <Route path="/admin/manage" element={<Layout><Admin_manage/></Layout>}></Route>
             </Routes>
         </Router>
 

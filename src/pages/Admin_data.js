@@ -5,7 +5,7 @@ import Count_event from "../components/Count_event";
 
 const Admin_data = () => {
     useEffect(() => {
-        fetch('http://localhost:3000/DoroSee/Admin/data/')
+        fetch('http://localhost:3000/dorosee/admin/data/')
             .then(response => response.json())
             .then(data => {
                 console.log("관리자 데이터 통계", data);
