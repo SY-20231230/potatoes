@@ -77,7 +77,8 @@ const Sidebar = () => {
                                 console.log(error);
                             })
                     }}>
-                        <span>Admin_data</span>
+                        <span>Admin</span><br/>
+                        <span>data</span>
                         <IoIosLogIn/>
                     </button>
                 </div>
@@ -94,7 +95,8 @@ const Sidebar = () => {
                                 console.log(error);
                             })
                     }}>
-                        <span>Admin_manage</span>
+                        <span>Admin</span><br/>
+                        <span>manage</span>
                         <FaRegUserCircle/>
                     </button>
                 </div>
