@@ -3,3 +3,11 @@
     height: 100vh;
     top: -3vh;
 }
+
+@media (max-width: 720px) {
+    #map {
+        width: 90vw;
+        height: 100vh;
+        top: -3vh;
+    }
+}
