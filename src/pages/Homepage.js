@@ -1,11 +1,12 @@
 import React, {useEffect} from "react";
-import Search from '../components/Search';
-import Map from '../components/Map';
+import {Map} from "react-kakao-maps-sdk";
 import './Homepage.css';
+
+import Search from '../components/Search';
 
 const Homepage = () => {
     useEffect(() => {
-        fetch('http://localhost:8000/dorosee/homepage/')
+        fetch('https://localhost:3000/')
             .then(response => response.json())
             .then(data => {
                 console.log("홈페이지", data);
@@ -15,7 +16,7 @@ const Homepage = () => {
     return (
         <div className="homepage">
             <div className="map-container">
-                <Map/>
+                <Map className="map" center={{lat: 37.713740, lng: 126.889165}} level={3}/>
                 <Search/>
             </div>
         </div>
