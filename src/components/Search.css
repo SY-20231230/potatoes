@@ -10,19 +10,3 @@
     font-size: 2vh;
     border-radius: 5px;
 }
-
-@media (max-width: 720px) {
-    .img_reading_glasses {
-        width: 4.5vw;
-        height: 4vh;
-        border-radius: 5px;
-    }
-
-    .search_text {
-        resize: none;
-        width: 43vw;
-        height: 3vh;
-        font-size: 2.5vh;
-        border-radius: 5px;
-    }
-}
