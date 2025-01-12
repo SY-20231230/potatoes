@@ -1,0 +1,26 @@
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 5vw;
+    height: 10vh;
+    font-size: 0.7vw;
+    font-weight: normal;
+    cursor: pointer;
+    background-color: transparent;
+    border-color: transparent;
+    gap: 0.1vw;
+}
+
+button:hover {
+    font-weight: bold;
+    color: blue;
+    font-size: 0.8vw;
+}
+
+button:hover span,
+button:hover svg {
+    color: inherit;
+    font-size: inherit;
+}

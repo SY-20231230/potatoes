@@ -1,109 +1,108 @@
-import React, {useState} from "react";
-import axios from "axios";
+import React, {useState} from "react"
+import './Sidebar.css'
 
-import './Sidebar.css';
-import {IoIosLogIn} from "react-icons/io";
-import {FaRegUserCircle} from "react-icons/fa";
-import {CiLocationOn} from "react-icons/ci";
-import {CiCircleMore} from "react-icons/ci";
+import Side_button from '../components/Side_button'
 
-const Sidebar = () => {
-    return (
-        <sidebar className="sidebar">
-            <div className="menu">
-                <div>
-                    <img src="images/road.jpg" className="img_logo" alt="" onClick={() => {
-                        axios.post("http://localhost:8000/dorosee/", {
-                            title: "Homepage",
-                            content: "Search, Map"
-                        })
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    }}>
-                    </img>
-                </div>
-                <div>
-                    <button className="login" onClick={() => {
-                        axios.post("http://localhost:8000/dorosee/", {
-                            title: "login",
-                            content: "login"
-                        })
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    }}>
-                        <span>길찾기</span>
-                        <CiLocationOn/>
-                    </button>
-                </div>
-                <div>
-                    <button className="login" onClick={() => {
-                        axios.post("http://localhost:8000/dorosee/", {
-                            title: "login",
-                            content: "login"
-                        })
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    }}>
-                        <span>더보기</span>
-                        <CiCircleMore/>
-                    </button>
-                </div>
+import {CiLocationOn} from "react-icons/ci"
+import {GiHole} from "react-icons/gi";
 
-            </div>
-            <div className="register">
-                <hr/>
-                <div>
-                    <button className="Admin_data" onClick={() => {
-                        axios.post("http://localhost:8000/dorosee/admin/data/", {
-                            title: "Admin_data",
-                            content: "data of pothole"
-                        })
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    }}>
-                        <span>Admin_data</span>
-                        <IoIosLogIn/>
-                    </button>
-                </div>
-                <div>
-                    <button className="Admin_manage" onClick={() => {
-                        axios.post("http://localhost:8000/dorosee/admin/manage/", {
-                            title: "Admin_manage",
-                            content: "manage data"
-                        })
-                            .then(function (response) {
-                                console.log(response);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            })
-                    }}>
-                        <span>Admin_manage</span>
-                        <FaRegUserCircle/>
-                    </button>
-                </div>
-            </div>
+import {IoIosLogIn} from "react-icons/io"
+import {IoIosLogOut} from "react-icons/io";
+import {FaRegUserCircle} from "react-icons/fa"
 
+import {FcStatistics} from "react-icons/fc";
+import {MdManageSearch} from "react-icons/md";
 
-        </sidebar>
+const Sidebar = ({member_id = "admin"}) => {
+
+    // 공통
+    const common_menu = (
+        <div className="menu">
+            <a href="http://localhost:3000/">
+                <img
+                    className="img_logo"
+                    src="images/logo_Doro-See.png"
+                    alt="Logo"/>
+            </a>
+
+            <Side_button
+                label="길찾기"
+                icon={CiLocationOn}
+                endpoint="http://localhost:3000/navi"/>
+
+            <Side_button
+                label="포트홀 지도"
+                icon={GiHole}
+                endpoint="http://localhost:3000/navi/porthole"/>
+        </div>
     )
-        ;
-};
 
-export default Sidebar;
+    // 비회원, 회원, 관리자 구분 메뉴
+    let settings_menu
+
+    // 비회원일 때
+    if (member_id === "0") {
+        settings_menu = (
+            <div className="settings">
+                <hr/>
+                <Side_button
+                    label="로그인"
+                    icon={IoIosLogIn}
+                    endpoint="http://localhost:3000/login"/>
+
+                <Side_button
+                    label="회원가입"
+                    icon={FaRegUserCircle}
+                    endpoint="http://localhost:3000/signup"/>
+            </div>
+        )
+    }
+    // 관리자일 때
+    else if (member_id === "admin") {
+        settings_menu = (
+            <div className="settings">
+                <hr/>
+                <Side_button
+                    label="포트홀 통계"
+                    icon={FcStatistics}
+                    endpoint="http://localhost:3000/admin/data"/>
+
+                <Side_button
+                    label="포트홀 관리"
+                    icon={MdManageSearch}
+                    endpoint="http://localhost:3000/admin/manage"/>
+
+                <Side_button
+                    label="로그아웃"
+                    icon={FaRegUserCircle}
+                    endpoint="http://localhost:3000/"/>
+            </div>
+        )
+    }
+    // 회원일 때
+    else {
+        settings_menu = (
+            <div className="settings">
+                <hr/>
+                <Side_button
+                    label={member_id}
+                    icon={FaRegUserCircle}
+                    endpoint="http://localhost:3000/user"/>
+
+                <Side_button
+                    label="로그아웃"
+                    icon={IoIosLogOut}
+                    endpoint="http://localhost:3000/"/>
+            </div>
+        )
+    }
+
+    return (
+        <div className="sidebar">
+            {common_menu}
+            {settings_menu}
+        </div>
+    )
+}
+
+export default Sidebar
