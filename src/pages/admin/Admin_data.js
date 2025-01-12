@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import './Admin_data.css';
 
-import Count_event from "../components/Count_event";
+import Count_event from "../../components/Count_event";
 
 const Admin_data = () => {
     useEffect(() => {

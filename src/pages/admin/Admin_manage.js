@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import './Admin_manage.css';
-import Data from "../Data_admin_manage";
+import Data from "../../Data_admin_manage";
 
 const Admin_manage = () => {
     useEffect(() => {

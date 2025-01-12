@@ -11,9 +11,10 @@
 }
 
 .map {
-    width: 94vw;
+    width: 95vw;
     height: 100vh;
-    top: -3vh;
+    /*footer 보이지 않게 지웠음*/
+    /*top: -3vh;*/
 }
 
 #search {
