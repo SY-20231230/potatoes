@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import './Search.css';
 
+import { FaSearch } from "react-icons/fa";
+
 const Search = () => {
     const [input_text, set_inputText] = useState("");
     const navigate = useNavigate();
@@ -18,7 +20,7 @@ const Search = () => {
 
     return (
         <div id="search">
-            <img src="images/reading_glasses.png" alt="Search" className="img_reading_glasses"/>
+            <FaSearch className="img_reading_glasses"/>
 
             <input
                 type="text"
@@ -26,7 +28,7 @@ const Search = () => {
                 placeholder="검색어를 입력하세요."
                 onChange={(e) => set_inputText(e.target.value)}
                 onKeyDown={(e) => enter_search(e)}
-            />
+            />&nbsp;
             <button
                 className="search_button"
                 onClick={() => active_button(input_text)}>

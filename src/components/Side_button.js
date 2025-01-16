@@ -4,7 +4,7 @@ import "./Side_button.css";
 
 const Side_button = ({ label, icon: Icon, endpoint }) => {
     const handleClick = () => {
-        const data = label === "로그아웃" ? { member_id: "0" } : { action: label };
+        const data = label === "로그아웃" ? { member_id: "0" } : { action: endpoint };
 
         axios.post(endpoint, data)
             .then((response) => {
