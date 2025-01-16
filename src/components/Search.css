@@ -1,6 +1,6 @@
 #search {
     position: absolute;
-    top: 1vh;
+    top: 2vh;
     left: 50%;
     transform: translateX(-50%);
     z-index: 10;
@@ -23,7 +23,7 @@
 }
 
 .search_button {
-    width: 2.3vw;
+    width: 3vw;
     height: 3vh;
     cursor: pointer;
     text-align: center;
