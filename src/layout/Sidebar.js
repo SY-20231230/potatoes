@@ -13,7 +13,7 @@ import {FaRegUserCircle} from "react-icons/fa"
 import {FcStatistics} from "react-icons/fc";
 import {MdManageSearch} from "react-icons/md";
 
-const Sidebar = ({member_id = "admin"}) => {
+const Sidebar = ({user_id = "1", master_id}) => {
 
     // 공통
     const common_menu = (
@@ -40,25 +40,8 @@ const Sidebar = ({member_id = "admin"}) => {
     // 비회원, 회원, 관리자 구분 메뉴
     let settings_menu
 
-    // 비회원일 때
-    if (member_id === "0") {
-        settings_menu = (
-            <div className="settings">
-                <hr/>
-                <Side_button
-                    label="로그인"
-                    icon={IoIosLogIn}
-                    endpoint="http://localhost:3000/login"/>
-
-                <Side_button
-                    label="회원가입"
-                    icon={FaRegUserCircle}
-                    endpoint="http://localhost:3000/signup"/>
-            </div>
-        )
-    }
     // 관리자일 때
-    else if (member_id === "admin") {
+    if (user_id === "" && master_id !== "") {
         settings_menu = (
             <div className="settings">
                 <hr/>
@@ -79,13 +62,14 @@ const Sidebar = ({member_id = "admin"}) => {
             </div>
         )
     }
+
     // 회원일 때
-    else {
+    else if (user_id !== "" && master_id === "") {
         settings_menu = (
             <div className="settings">
                 <hr/>
                 <Side_button
-                    label={member_id}
+                    label={user_id}
                     icon={FaRegUserCircle}
                     endpoint="http://localhost:3000/user"/>
 
@@ -93,6 +77,23 @@ const Sidebar = ({member_id = "admin"}) => {
                     label="로그아웃"
                     icon={IoIosLogOut}
                     endpoint="http://localhost:3000/"/>
+            </div>
+        )
+
+    } // 비회원일 때
+    else {
+        settings_menu = (
+            <div className="settings">
+                <hr/>
+                <Side_button
+                    label="로그인"
+                    icon={IoIosLogIn}
+                    endpoint="http://localhost:3000/login"/>
+
+                <Side_button
+                    label="회원가입"
+                    icon={FaRegUserCircle}
+                    endpoint="http://localhost:3000/signup"/>
             </div>
         )
     }
