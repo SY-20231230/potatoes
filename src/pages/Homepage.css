@@ -13,15 +13,4 @@
 .map {
     width: 95vw;
     height: 100vh;
-    /*footer 보이지 않게 지웠음*/
-    /*top: -3vh;*/
-}
-
-#search {
-    position: absolute;
-    top: 3vh;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    resize: none;
 }

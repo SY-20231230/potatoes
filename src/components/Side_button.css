@@ -1,10 +1,8 @@
-button {
+.comp_button {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    width: 5vw;
-    height: 10vh;
     font-size: 0.7vw;
     font-weight: normal;
     cursor: pointer;
@@ -13,14 +11,14 @@ button {
     gap: 0.1vw;
 }
 
-button:hover {
+.comp_button:hover {
     font-weight: bold;
     color: blue;
     font-size: 0.8vw;
 }
 
-button:hover span,
-button:hover svg {
+.comp_button:hover span,
+.comp_button:hover svg {
     color: inherit;
     font-size: inherit;
 }

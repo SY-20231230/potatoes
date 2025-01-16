@@ -29,3 +29,8 @@
     justify-content: flex-end;
     flex-grow: 1;
 }
+
+.comp_button {
+    width: 5vw;
+    height: 10vh;
+}

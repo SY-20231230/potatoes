@@ -2,9 +2,12 @@ import React from "react"
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom"
 
 import Layout from "./layout/Layout"
-import Homepage from "./pages/Homepage"
+
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
+
+import Homepage from "./pages/Homepage"
+import Search_result from "./pages/navi/Search_result"
 
 import Directions from "./pages/navi/Directions"
 import Porthole from "./pages/navi/Porthole"
@@ -26,6 +29,7 @@ function App() {
 
                 {/*홈페이지*/}
                 <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
+                <Route path="/search" element={<Layout><Search_result/></Layout>}></Route>
 
                 {/*내비게이션*/}
                 <Route path="/navi" element={<Layout><Directions/></Layout>}></Route>
