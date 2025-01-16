@@ -51,15 +51,30 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'myproject.urls'
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
-
+"""
+TEMPLATES = [
+    {
+        
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [TEMPLATES_DIR],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },   
+    },
+]
+"""
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # React 빌드 파일의 index.html이 위치한 경로
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,7 +86,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'myproject.wsgi.application'
 
 
@@ -126,9 +140,20 @@ USE_TZ = False
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+"""STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    os.path.join(BASE_DIR, "static/react"),
+]"""
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # React 빌드 파일 및 추가 정적 파일
+    os.path.join(BASE_DIR, 'static/react'),  # React 정적 파일
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # collectstatic 파일 저장 경로

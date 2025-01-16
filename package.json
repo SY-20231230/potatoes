@@ -2,6 +2,7 @@
   "name": "graduation_front_end",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/static/react",
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",

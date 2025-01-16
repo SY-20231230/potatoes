@@ -12,13 +12,13 @@ import {FaRegUserCircle} from "react-icons/fa"
 
 import {FcStatistics} from "react-icons/fc";
 import {MdManageSearch} from "react-icons/md";
-
+// 마스터로 하고싶을때 마스터 아이디로 하고 유저 아이디는 지우든지 비회원은 아무거나고
 const Sidebar = ({user_id = "1", master_id}) => {
 
-    // 공통
+    // 공통   버튼을 누르는건 여기 있고
     const common_menu = (
         <div className="menu">
-            <a href="http://localhost:3000/">
+            <a href="http://127.0.0.1:8000">
                 <img
                     className="img_logo"
                     src="images/logo_Doro-See.png"
@@ -28,12 +28,12 @@ const Sidebar = ({user_id = "1", master_id}) => {
             <Side_button
                 label="길찾기"
                 icon={CiLocationOn}
-                endpoint="http://localhost:3000/navi"/>
+                endpoint="http://127.0.0.1:8000/navi"/>
 
             <Side_button
                 label="포트홀 지도"
                 icon={GiHole}
-                endpoint="http://localhost:3000/navi/porthole"/>
+                endpoint="http://127.0.0.1:8000/navi/porthole"/>
         </div>
     )
 
