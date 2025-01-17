@@ -19,23 +19,16 @@ from django.urls import path, re_path
 
 from myapp import views
 from django.views.generic import TemplateView
-
 from django.conf import settings
 from django.conf.urls.static import static
-from myapp.views import api_view
-
-urlpatterns = [
-     path("", views.react_view, name="react"),
-     path('api/', api_view, name='api'),
-    # 다른 URL 패턴들
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
 """
 urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]"""
 
-
+urlpatterns = [
+    path("", views.react_view, name="react"),  # 기본 경로에 React 렌더링
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

@@ -4,9 +4,12 @@ import "./Side_button.css";
 
 const Side_button = ({ label, icon: Icon, endpoint }) => {
     const handleClick = () => {
-        const data = label === "로그아웃" ? { member_id: "0" } : { action: endpoint };
+        const data = label === "로그아웃" ? { member_id: "0" } : { action: label };
 
-        axios.post(endpoint, data)
+        // Updated endpoint to include Django API URL if not provided
+        const finalEndpoint = endpoint || "http://127.0.0.1:8000/api/action/";
+
+        axios.post(finalEndpoint, data)
             .then((response) => {
                 console.log("응답 성공:", response.data);
                 if (label === "로그아웃") {

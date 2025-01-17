@@ -14,7 +14,7 @@ from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -148,12 +148,10 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 """STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static/react"),
 ]"""
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # React 빌드 파일 및 추가 정적 파일
-    os.path.join(BASE_DIR, 'static/react'),  # React 정적 파일
+    os.path.join(BASE_DIR, 'static'),  # 정적 파일 디렉토리
 ]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # collectstatic 파일 저장 경로
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
