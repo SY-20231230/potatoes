@@ -1,30 +1,30 @@
 import React from "react";
-import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import "./Side_button.css";
 
-const Side_button = ({ label, icon: Icon, endpoint }) => {
-    const handleClick = () => {
-        const data = label === "로그아웃" ? { member_id: "0" } : { action: label };
+const Side_button = ({ label, icon: Icon, endpoint, isLogout = false }) => {
+    const navigate = useNavigate();
 
-        // Updated endpoint to include Django API URL if not provided
-        const finalEndpoint = endpoint || "http://127.0.0.1:8000/api/action/";
-
-        axios.post(finalEndpoint, data)
-            .then((response) => {
-                console.log("응답 성공:", response.data);
-                if (label === "로그아웃") {
-                    window.location.href = "/";
-                }
-            })
-            .catch((error) => {
-                console.error("응답 실패:", error);
-            });
+    const handle_logout = () => {
+        if (isLogout) {
+            sessionStorage.clear();
+            navigate('/');
+            window.location.reload();
+        }
     };
 
-    return (
-        <button className="comp_button" onClick={handleClick}>
+    return isLogout ? (
+        // 로그아웃 버튼일 경우
+        <button className="comp_button" onClick={handle_logout}>
             <span>{label}</span> {Icon && <Icon />}
         </button>
+    ) : (
+        // 일반 버튼일 경우
+        <Link to={endpoint} className="comp_button_link">
+            <button className="comp_button">
+                <span>{label}</span> {Icon && <Icon />}
+            </button>
+        </Link>
     );
 };
 

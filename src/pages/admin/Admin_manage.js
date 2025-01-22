@@ -3,13 +3,6 @@ import './Admin_manage.css';
 import Data from "../../Data_admin_manage";
 
 const Admin_manage = () => {
-    useEffect(() => {
-        fetch('https://localhost:3000/admin/manage/')
-            .then(response => response.json())
-            .then(data => {
-                console.log("관리자 데이터 관리", data);
-            })
-    });
 
     // 페이지당 데이터 수
     const per_page = 10;
@@ -17,7 +10,7 @@ const Admin_manage = () => {
     // 현재 페이지 상태
     const [current_page, set_page] = useState(1);
 
-    // 데이터 계산
+    // 페이지 계산
     const total_pages = Math.ceil(Data.length / per_page);
     const start_index = (current_page - 1) * per_page;
     const current_data = Data.slice(start_index, start_index + per_page);
@@ -48,7 +41,7 @@ const Admin_manage = () => {
                         <td className="no">{start_index + index + 1}</td>
                         <td className="id">{row.col1}</td>
                         <td className="image">
-                            <img src="images/pothole.jpg" alt={`image ${index}`}
+                            <img src="/images/pothole.jpg" alt={`image ${start_index + index}`}
                                  style={{width: '50px', cursor: 'pointer'}} onClick={row.col2}/></td>
                         <td className="damage_type">{row.col3}</td>
                         <td className="status">{row.col4}</td>
