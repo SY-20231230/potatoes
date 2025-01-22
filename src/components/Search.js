@@ -18,7 +18,7 @@ const Search = () => {
 
     return (
         <div id="search">
-            <img src="http://127.0.0.1:8000//static/images/reading_glasses.png" alt="Search" className="img_reading_glasses" />
+            <img src="/images/reading_glasses.png" alt="Search" className="img_reading_glasses" />
 
             <input
                 type="text"

@@ -4,14 +4,9 @@ import './Admin_data.css';
 import Count_event from "../../components/Count_event";
 
 const Admin_data = () => {
-    useEffect(() => {
-        fetch('https://localhost:3000/admin/data/')
-            .then(response => response.json())
-            .then(data => {
-                console.log("관리자 데이터 통계", data);
-            })
-    });
-    // 데이터 연결되기 전까지 테스트용 난수 생성
+
+    // 데이터 연결되기 전까지 테스트용 난수 생성한 것 
+    // 변수 넘기면 주석 처리하고 확인해주세요
     const generate_random_count = () => {
         return Math.floor(Math.random() * 1000000).toLocaleString();
     };
