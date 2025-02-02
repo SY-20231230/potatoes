@@ -1,26 +1,30 @@
 .sidebar {
     position: relative;
-    width: 5vw;
+    width: 6vw;
     height: 100vh;
     z-index: 20;
     float: left;
     top: 0;
     display: flex;
     flex-direction: column;
-    background-color: aliceblue;
+    background-color: white;
+    border-color: transparent;
+    border-right: 0.2vh solid #E81E24;
 }
 
 .img_logo {
-    width: 5vw;
-    height: 10vh;
+    width: 6vw;
+    height: 12vh;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+
 }
 
 .settings hr {
     width: 4vw;
+    border: 0.3vh solid #FFA500;
 }
 
 .settings {
@@ -28,9 +32,13 @@
     flex-direction: column;
     justify-content: flex-end;
     flex-grow: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .comp_button {
-    width: 5vw;
+    width: 6vw;
     height: 10vh;
+    white-space: nowrap;
+    gap: 0.3vh;
 }

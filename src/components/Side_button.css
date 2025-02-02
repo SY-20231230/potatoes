@@ -3,8 +3,8 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 0.7vw;
-    font-weight: normal;
+    font-size: 0.9vw;
+    font-weight: bold;
     cursor: pointer;
     background-color: transparent;
     border-color: transparent;
@@ -16,13 +16,16 @@
 }
 
 .comp_button:hover {
-    font-weight: bold;
-    color: blue;
-    font-size: 0.8vw;
+    color: #E81E24;
+
 }
 
 .comp_button:hover span,
 .comp_button:hover svg {
     color: inherit;
     font-size: inherit;
+}
+
+.icon_link {
+    color: #E81E24;
 }

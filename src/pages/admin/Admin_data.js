@@ -27,8 +27,6 @@ const Admin_data = () => {
                 </div>
             </div>
 
-            <hr/>
-
             <div className="event">
                 <h3>시간별 발생 건수</h3>
                 <div className="event_container">

@@ -12,12 +12,12 @@ const Login = () => {
 
     // 사용자 로그인
     const handle_user = () => {
-        setUser({user_id: "회원1", master_id: null});
+        setUser({user_id: "임시회원로그인", master_id: null});
 
         navigate('/')
         window.location.reload();
 
-        sessionStorage.setItem("user_id", "회원1");
+        sessionStorage.setItem("user_id", "임시회원로그인");
         sessionStorage.removeItem("master_id"); // 관리자 정보 제거
     };
 
@@ -33,8 +33,9 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <p>login</p>
+        <div className="login_content">
+            <span>login</span>
+            <br/>
             <button onClick={handle_user}>회원</button>
             <button onClick={handle_master}>관리자</button>
         </div>

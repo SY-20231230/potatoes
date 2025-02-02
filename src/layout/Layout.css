@@ -1,0 +1,15 @@
+.main_content {
+    position: relative;
+}
+
+/*지우면 카카오맵이 작동 안함*/
+.map {
+    width: 93.8vw;
+    height: 100vh;
+}
+
+.content {
+    width: 100vw;
+    height: 100vh;
+    background-color: #f5f5f5;
+}

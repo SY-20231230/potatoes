@@ -1,7 +1,5 @@
 .admin_manage {
     position: relative;
-    width: 100vw;
-    height: 97vh;
     z-index: 10;
 }
 
@@ -15,7 +13,7 @@
     font-size: 3vh;
     font-weight: bold;
     text-align: center;
-    background-color: aliceblue;
+    background-color: #cccccc;
 }
 
 .table_body tr td {
@@ -33,25 +31,30 @@
 }
 
 .pagination {
+    position: fixed;
+    bottom: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
-    gap: 0.5vh;
+    align-items: center;
+    gap: 1vh;
 }
 
 .page_button {
     color: black;
-    font-size: 2vh;
+    font-size: 2.5vh;
 }
 
 .page_button.active {
     font-weight: bold;
-    color: blue;
-    font-size: 2vh;
+    color: #E81E24;
+    font-size: 2.5vh;
 }
 
 .page_button:hover {
     font-weight: bold;
-    color: blue;
+    color: #E81E24;
     font-size: 2.5vh;
 
 }
