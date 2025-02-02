@@ -1,25 +1,21 @@
 import React from "react";
-import './Layout.css'
+import './Layout.css';
 
 import Header from "./Header";
 import Footer from "./Footer";
 import Sidebar from "./Sidebar";
 
-const Layout = (props: {
-    children: React.ReactNode
-}) => {
+const Layout = (props: { children: React.ReactNode }) => {
     return (
         <div>
-            <Sidebar/>
-            <Header/>
+            <Sidebar />
+            <Header />
 
-            <main>
-                {props.children}
+            <main className="main_content">
+                <div className="content">{props.children}</div>
             </main>
-
-            <Footer/>
         </div>
-    )
+    );
 }
 
-export default Layout
+export default Layout;

@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import './Search.css';
 
+import { FaMagnifyingGlass } from "react-icons/fa6";
+
 const Search = () => {
     const [input_text, set_inputText] = useState("");
     const navigate = useNavigate();
@@ -11,14 +13,14 @@ const Search = () => {
     };
 
     const enter_search = (e) => {
-        if (e.key === "Enter") {
+        if (e.key === "Enter" && input_text !== "") {
             active_button(input_text);
         }
     };
 
     return (
         <div id="search">
-            <img src="/images/reading_glasses.png" alt="Search" className="img_reading_glasses" />
+            <FaMagnifyingGlass className="img_reading_glasses"/>
 
             <input
                 type="text"
@@ -27,11 +29,6 @@ const Search = () => {
                 onChange={(e) => set_inputText(e.target.value)}
                 onKeyDown={(e) => enter_search(e)}
             />
-            <button
-                className="search_button"
-                onClick={() => active_button(input_text)}>
-                검색
-            </button>
         </div>
     );
 };

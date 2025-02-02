@@ -22,7 +22,7 @@ const Side_button = ({ label, icon: Icon, endpoint, isLogout = false }) => {
         // 일반 버튼일 경우
         <Link to={endpoint} className="comp_button_link">
             <button className="comp_button">
-                <span>{label}</span> {Icon && <Icon />}
+                <span>{label}</span> {Icon && <Icon className="icon_link"/>}
             </button>
         </Link>
     );

@@ -1,4 +1,4 @@
-import Homepage from "../pages/Homepage"
+import Homepage from "../components/Home_map"
 import Layout from "./Layout";
 
 const Homepage = () => {

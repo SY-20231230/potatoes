@@ -5,9 +5,10 @@ import Layout from "./layout/Layout";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Homepage from "./pages/Homepage";
+import Home_map from "./components/Home_map";
 
 import Search_result from "./pages/navi/Search_result";
+import Place from "./pages/navi/Place_search";
 import Directions from "./pages/navi/Directions";
 import Porthole from "./pages/navi/Porthole";
 
@@ -26,7 +27,7 @@ function App() {
                 <Routes>
 
                     {/*홈페이지*/}
-                    <Route path="/" element={<Layout><Homepage/></Layout>}/>
+                    <Route path="/" element={<Layout><Home_map/></Layout>}/>
 
                     {/*세션 관리*/}
                     <Route path="/login" element={<Layout><Login/></Layout>}/>
@@ -34,6 +35,7 @@ function App() {
 
                     {/*내비게이션*/}
                     <Route path="/search" element={<Layout><Search_result/></Layout>}/>
+                    <Route path="/place" element={<Layout><Place/></Layout>}/>
 
                     <Route path="/navi" element={<Layout><Directions/></Layout>}/>
                     <Route path="/navi/porthole" element={<Layout><Porthole/></Layout>}/>
