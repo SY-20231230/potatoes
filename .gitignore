@@ -20,8 +20,8 @@
 
 # jihoon_wrote
 .env
-.misc.xml
-.README.md
+misc.xml
+README.md
 
 
 npm-debug.log*
