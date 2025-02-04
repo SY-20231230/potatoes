@@ -1,24 +1,35 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import './Admin_manage.css';
 import Data from "../../Data_admin_manage";
+import {Link} from "react-router-dom";
+
+// 샘플 데이터는 src/Data_admin_manage.js 위치에 있습니다.
 
 const Admin_manage = () => {
 
-    // 페이지당 데이터 수
     const per_page = 10;
-
-    // 현재 페이지 상태
     const [current_page, set_page] = useState(1);
 
-    // 페이지 계산
     const total_pages = Math.ceil(Data.length / per_page);
     const start_index = (current_page - 1) * per_page;
     const current_data = Data.slice(start_index, start_index + per_page);
 
-    // 페이지 변경 함수
     const change_page = (page) => {
         set_page(page);
     };
+
+    const [is_modal_open, set_is_modal_open] = useState(false);
+    const [modal_image, set_modal_image] = useState("");
+
+    const open_modal = (image) => {
+        set_modal_image(image);
+        set_is_modal_open(true);
+    };
+
+    const close_modal = () => {
+        set_is_modal_open(false);
+    };
+
 
     return (
         <div className="admin_manage">
@@ -36,23 +47,27 @@ const Admin_manage = () => {
                 </tr>
                 </thead>
                 <tbody className="table_body">
-                {current_data.map((row, index) => (
+                {current_data.map((roadreport, index) => (
                     <tr key={index}>
                         <td className="no">{start_index + index + 1}</td>
-                        <td className="id">{row.col1}</td>
+                        <td className="id">{roadreport.col1}</td>
                         <td className="image">
-                            <img src="/images/pothole.jpg" alt={`image ${start_index + index}`}
-                                 style={{width: '50px', cursor: 'pointer'}} onClick={row.col2}/></td>
-                        <td className="damage_type">{row.col3}</td>
-                        <td className="status">{row.col4}</td>
-                        <td className="time">{row.col5}</td>
-                        <td className="region">{row.col6}</td>
+                            <img
+                                src={`/images/${roadreport.col2}`}
+                                alt={`image ${start_index + index}`}
+                                className="clickable-image"
+                                onClick={() => open_modal(`/images/${roadreport.col2}`)}
+                            />
+                        </td>
+                        <td className="damage_type">{roadreport.col3}</td>
+                        <td className="status">{roadreport.col4}</td>
+                        <td className="time">{roadreport.col5}</td>
+                        <td className="region">{roadreport.col6}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
 
-            {/* Pagination */}
             <div className="pagination">
                 {Array.from({length: total_pages}, (_, index) => (
                     <button key={index} className={`page_button ${current_page === index + 1 ? 'active' : ''}`}
@@ -61,6 +76,15 @@ const Admin_manage = () => {
                     </button>
                 ))}
             </div>
+
+            {is_modal_open && (
+                <div className="modal-background" onClick={close_modal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="modal-close" onClick={close_modal}>X</button>
+                        <img src={modal_image} alt="Modal" className="modal-image"/>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

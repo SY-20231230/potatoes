@@ -26,7 +26,7 @@ const Admin_data = () => {
                     <Count_event name={"완료"} count={count[3]}/>
                 </div>
             </div>
-
+            <hr/>
             <div className="event">
                 <h3>시간별 발생 건수</h3>
                 <div className="event_container">

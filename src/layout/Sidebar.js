@@ -42,8 +42,8 @@ const Sidebar = () => {
             // master_id가 있을 경우 관리자 메뉴 실행
             <div className="settings">
                 <hr />
-                <Side_button label="포트홀 통계" icon={FcStatistics} endpoint="/admin/data" />
-                <Side_button label="포트홀 관리" icon={MdManageSearch} endpoint="/admin/manage" />
+                <Side_button label="파손 통계" icon={FcStatistics} endpoint="/admin/data" />
+                <Side_button label="파손 관리" icon={MdManageSearch} endpoint="/admin/manage" />
                 <Side_button label="로그아웃" icon={FaRegUserCircle} isLogout={true} />
             </div>
         )

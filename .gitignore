@@ -18,7 +18,11 @@
 .env.test.local
 .env.production.local
 
+# jihoon_wrote
 .env
+.misc.xml
+.readme.md
+
 
 npm-debug.log*
 yarn-debug.log*

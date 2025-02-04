@@ -5,6 +5,13 @@
     text-align: center;
 }
 
+.admin_data hr {
+    width: 65vw;
+    height: 0.2vh;
+    border: none;
+    background-color: #E81E24;
+}
+
 .event_container {
     display: flex;
     justify-content: center;
@@ -18,14 +25,13 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    border: 0.3vh solid #E81E24;
     border-radius: 0.5vh;
 
     margin: 0 auto;
-    margin-bottom: 5vh;
+    margin-bottom: 3vh;
     padding-bottom: 2vh;
     position: relative;
-    top: 3vh;
+    top: 1vh;
 }
 
 
