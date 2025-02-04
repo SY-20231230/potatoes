@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# 🚗 Doro-See
+도로 파손을 카메라로 인식하고 AI로 분석하여 사용자에게 내비게이션의 형태로 제공하는 프로젝트입니다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🗓 프로젝트 기간
+2024.09.02 ~ 현재 진행중
 
-## Available Scripts
+## 👨🏻‍💻 팀 구성
+정지훈(프론트엔드), **한승준**(하드웨어), 윤성용(백엔드), 한승우(AI)
 
-In the project directory, you can run:
+## 🎨 개발 환경
+React <br/>
+JavaScript <br/>
 
-### `npm start`
+Python <br/>
+Django <br/>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Raspberry Pi 5 <br/>
+YOLO v5 <br/>
+MySQL <br/>
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📌 프론트엔드 주요 기능
+> 컴포넌트와 레이아웃, 페이지로 나누어 React를 이용한 프론트엔드를 구현하였습니다.
 
-### `npm test`
+### 메인 화면 지도
+- 카카오맵 API를 활용
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 관리자 페이지
+- 도로파손 누적 발생 현황, 시간별, 지역별, 유형별 발생 건수 통계 표시
+- 도로파손 상세 내역 확인 및 처리 여부 관리
 
-### `npm run build`
+### 마이 페이지
+- 즐겨찾기, 도로파손 신고내역, 길찾기 기록 등 카테고리 표시
+- 알림 수신 설정 기능
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 로그인/회원가입
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  
