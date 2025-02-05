@@ -4,6 +4,7 @@
 
 # Hard - 한승준
 * Mainboard - Rasberry Pi 5 8GB 
+* Bookworm / aarch64 (64Bit)
 
 ## **Lib**
 
