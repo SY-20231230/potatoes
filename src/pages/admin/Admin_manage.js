@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import './Admin_manage.css';
 import Data from "../../Data_admin_manage";
 import {Link} from "react-router-dom";
+import Dropdown from 'react-dropdown';
+import "react-dropdown/style.css";
 
 // 샘플 데이터는 src/Data_admin_manage.js 위치에 있습니다.
 
@@ -30,6 +32,14 @@ const Admin_manage = () => {
         set_is_modal_open(false);
     };
 
+    const options = [
+        {value: '접수됨', label: '접수됨'},
+        {value: '처리중', label: '처리중'},
+        {value: '해결됨', label: '해결됨'},
+        {value: '보류중', label: '보류중'},
+    ];
+    const defaultOption = options[0];
+
 
     return (
         <div className="admin_manage">
@@ -44,6 +54,7 @@ const Admin_manage = () => {
                     <td>status</td>
                     <td>time</td>
                     <td>region</td>
+                    <td>edit</td>
                 </tr>
                 </thead>
                 <tbody className="table_body">
@@ -59,10 +70,16 @@ const Admin_manage = () => {
                                 onClick={() => open_modal(`/images/${roadreport.col2}`)}
                             />
                         </td>
-                        <td className="damage_type">{roadreport.col3}</td>
-                        <td className="status">{roadreport.col4}</td>
+                        <td className="damage_type">{Array.isArray(roadreport.col3) ? roadreport.col3.join(', ') : roadreport.col3}</td>
+                        <td className="status">
+                            <Dropdown options={options} value={roadreport.col4} />
+                        </td>
                         <td className="time">{roadreport.col5}</td>
                         <td className="region">{roadreport.col6}</td>
+                        <td className="edit">
+                            <button>수정</button>
+                            <button>삭제</button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
