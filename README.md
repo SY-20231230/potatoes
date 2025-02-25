@@ -3,7 +3,8 @@
 # Back - 윤성용
 
 # Hard - 한승준
-* Mainboard - Rasberry Pi 5 8GB 
+* Mainboard - Rasberry Pi 5 8GB
+* assi board - Arduino UNO
 * Bookworm / aarch64 (64Bit)
 
 ## **Lib**
@@ -15,6 +16,8 @@
 | Pynmea2 | Any |
 | gpsd | Any |
 | gpsd-clients | Any |
+| - | - |
+| TinyGPSPlus | Any |
 
 
 
