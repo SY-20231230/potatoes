@@ -22,9 +22,9 @@ const Signup = () => {
     const handle_submit = (e) => {
         e.preventDefault();
         if (users.user_pw !== users.conf_user_pw) {
-            alert("Passwords do not match!");
+            alert("비밀번호가 일치하지 않습니다.");
         } else {
-            alert("Signup Successful!");
+            alert("회원가입이 완료되었습니다.");
             console.log(users);
         }
     };

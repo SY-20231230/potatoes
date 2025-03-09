@@ -1,12 +1,12 @@
-import Homepage from "../components/Home_map"
+import HomeMap from "../components/HomeMap"
 import Layout from "./Layout";
 
-const Homepage = () => {
+const Index = () => {
     return (
         <Layout>
-            <Homepage/>
+            <HomeMap/>
         </Layout>
     )
 }
 
-export default Homepage
+export default Index

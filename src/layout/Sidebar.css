@@ -42,3 +42,27 @@
     white-space: nowrap;
     gap: 0.3vh;
 }
+
+@media (max-width: 480px) { /* 모바일 */
+    .sidebar {
+        width: 60px; /* 좁은 화면에 맞춰 너비 축소 */
+    }
+
+    .img_logo {
+        height: 50px; /* 작은 높이로 조정 */
+    }
+
+    .comp_button {
+        height: 40px; /* 버튼 높이 축소 */
+        font-size: 0.75rem;
+        gap: 3px; /* 간격 감소 */
+    }
+
+    .settings hr {
+        width: 60%;
+    }
+
+    .settings {
+        padding: 0 0.5rem; /* 여백 최소화 */
+    }
+}

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import './Admin_manage.css';
+import './AdminManage.css';
 import Data from "../../Data_admin_manage";
 import {Link} from "react-router-dom";
 import Dropdown from 'react-dropdown';
@@ -7,7 +7,7 @@ import "react-dropdown/style.css";
 
 // 샘플 데이터는 src/Data_admin_manage.js 위치에 있습니다.
 
-const Admin_manage = () => {
+const AdminManage = () => {
 
     const per_page = 10;
     const [current_page, set_page] = useState(1);
@@ -54,7 +54,7 @@ const Admin_manage = () => {
                     <td>status</td>
                     <td>time</td>
                     <td>region</td>
-                    <td>edit</td>
+                    <td>e.t.c</td>
                 </tr>
                 </thead>
                 <tbody className="table_body">
@@ -77,7 +77,7 @@ const Admin_manage = () => {
                         <td className="time">{roadreport.col5}</td>
                         <td className="region">{roadreport.col6}</td>
                         <td className="edit">
-                            <button>수정</button>
+                            <button>위치</button>
                             <button>삭제</button>
                         </td>
                     </tr>
@@ -106,4 +106,4 @@ const Admin_manage = () => {
     );
 };
 
-export default Admin_manage;
+export default AdminManage;

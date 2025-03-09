@@ -5,55 +5,59 @@ import Layout from "./layout/Layout";
 
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home_map from "./components/Home_map";
+import HomeMap from "./components/HomeMap";
 
-import Search_result from "./pages/navi/Search_result";
-import Place from "./pages/navi/Place_search";
+import SearchResult from "./pages/navi/SearchResult";
+
 import Directions from "./pages/navi/Directions";
 import Porthole from "./pages/navi/Porthole";
+import Place from "./pages/navi/PlaceSearch";
 
-import User_settings from "./pages/user/User_settings";
-import User_like from "./pages/user/User_like";
-import User_report from "./pages/user/User_report";
-import User_history from "./pages/user/User_history";
+import UserSettings from "./pages/user/UserSettings";
+import UserLike from "./pages/user/UserLike";
+import UserReport from "./pages/user/UserReport";
+import UserHistory from "./pages/user/UserHistory";
 
-import Admin_data from "./pages/admin/Admin_data";
-import Admin_manage from "./pages/admin/Admin_manage";
+import AdminData from "./pages/admin/AdminData";
+import AdminManage from "./pages/admin/AdminManage";
+
+import NotFound from "./pages/NotFound";
 
 function App() {
     return (
-        <div>
-            <BrowserRouter>
-                <Routes>
+        <BrowserRouter>
+            <Routes>
+                {/* 홈페이지 */}
+                <Route path="/" element={<Layout/>}>
+                    <Route index element={<HomeMap/>}/>
 
-                    {/*홈페이지*/}
-                    <Route path="/" element={<Layout><Home_map/></Layout>}/>
+                    {/* 세션 관리 */}
+                    <Route path="login" element={<Login/>}/>
+                    <Route path="signup" element={<Signup/>}/>
 
-                    {/*세션 관리*/}
-                    <Route path="/login" element={<Layout><Login/></Layout>}/>
-                    <Route path="/signup" element={<Layout><Signup/></Layout>}/>
+                    {/* 내비게이션 */}
+                    <Route path="search-result" element={<SearchResult/>}/>
 
-                    {/*내비게이션*/}
-                    <Route path="/search" element={<Layout><Search_result/></Layout>}/>
-                    <Route path="/place" element={<Layout><Place/></Layout>}/>
+                    <Route path="directions" element={<Directions/>}/>
+                    <Route path="porthole" element={<Porthole/>}/>
+                    <Route path="place" element={<Place/>}/>
 
-                    <Route path="/navi" element={<Layout><Directions/></Layout>}/>
-                    <Route path="/navi/porthole" element={<Layout><Porthole/></Layout>}/>
+                    {/* 사용자 */}
+                    <Route path="user/settings" element={<UserSettings/>}/>
+                    <Route path="user/like" element={<UserLike/>}/>
+                    <Route path="user/report" element={<UserReport/>}/>
+                    <Route path="user/history" element={<UserHistory/>}/>
 
-                    {/*사용자*/}
-                    <Route path="/user" element={<Layout><User_settings/></Layout>}/>
-                    <Route path="/user/like" element={<Layout><User_like/></Layout>}/>
-                    <Route path="/user/report" element={<Layout><User_report/></Layout>}/>
-                    <Route path="/user/history" element={<Layout><User_history/></Layout>}/>
+                    {/* 관리자 */}
+                    <Route path="admin/data" element={<AdminData/>}/>
+                    <Route path="admin/manage" element={<AdminManage/>}/>
 
-                    {/*관리자*/}
-                    <Route path="/admin/data" element={<Layout><Admin_data/></Layout>}/>
-                    <Route path="/admin/manage" element={<Layout><Admin_manage/></Layout>}/>
-
-                </Routes>
-            </BrowserRouter>
-        </div>
-    )
+                    {/* 404 오류 페이지 */}
+                    <Route path="*" element={<NotFound/>}/>
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

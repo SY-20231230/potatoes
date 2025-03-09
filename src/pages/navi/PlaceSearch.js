@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {Map, MapMarker} from "react-kakao-maps-sdk";
 
-function Place_search() {
+function PlaceSearch() {
     const [info, setInfo] = useState()
     const [markers, setMarkers] = useState([])
     const [map, setMap] = useState()
@@ -65,4 +65,4 @@ function Place_search() {
     )
 }
 
-export default Place_search
+export default PlaceSearch
