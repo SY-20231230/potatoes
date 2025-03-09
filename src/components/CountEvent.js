@@ -1,7 +1,7 @@
 import React from "react";
-import "./Count_event.css";
+import "./CountEvent.css";
 
-const Count_event = ({name, count}) => {
+const CountEvent = ({name, count}) => {
     return (
         <div className="count_event">
             <p>{name}</p>
@@ -9,4 +9,4 @@ const Count_event = ({name, count}) => {
         </div>
     )
 }
-export default Count_event;
+export default CountEvent;

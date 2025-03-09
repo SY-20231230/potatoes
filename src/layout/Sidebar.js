@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import "./Sidebar.css";
-import Side_button from "../components/Side_button";
+import SideButton from "../components/SideButton";
 
 // menu icon
 import { FaDirections } from "react-icons/fa";
@@ -30,9 +30,9 @@ const Sidebar = () => {
                 <img src="/images/logo_Doro-See.png" alt="Logo" className="img_logo" />
             </Link>
 
-            <Side_button label="길찾기" icon={FaDirections} endpoint="/navi" />
-            <Side_button label="포트홀" icon={GiHole} endpoint="/navi/porthole" />
-            <Side_button label="장소 (클릭X)" icon={MdPlace} endpoint="/place" />
+            <SideButton label="길찾기" icon={FaDirections} endpoint="/directions" />
+            <SideButton label="포트홀" icon={GiHole} endpoint="/porthole" />
+            <SideButton label="장소 (클릭X)" icon={MdPlace} endpoint="/place" />
         </div>
     );
 
@@ -42,9 +42,9 @@ const Sidebar = () => {
             // master_id가 있을 경우 관리자 메뉴 실행
             <div className="settings">
                 <hr />
-                <Side_button label="파손 통계" icon={FcStatistics} endpoint="/admin/data" />
-                <Side_button label="파손 관리" icon={MdManageSearch} endpoint="/admin/manage" />
-                <Side_button label="로그아웃" icon={FaRegUserCircle} isLogout={true} />
+                <SideButton label="파손 통계" icon={FcStatistics} endpoint="/admin/data" />
+                <SideButton label="파손 관리" icon={MdManageSearch} endpoint="/admin/manage" />
+                <SideButton label="로그아웃" icon={FaRegUserCircle} is_logout={true} />
             </div>
         )
         : user_id
@@ -52,16 +52,16 @@ const Sidebar = () => {
                 // master_id가 없고, user_id가 있을 경우 회원 메뉴 실행
                 <div className="settings">
                     <hr />
-                    <Side_button label={trunc_label} icon={FaRegUserCircle} endpoint="/user" />
-                    <Side_button label="로그아웃" icon={IoIosLogOut} isLogout={true} />
+                    <SideButton label={trunc_label} icon={FaRegUserCircle} endpoint={`/user/settings?user_id=${user_id}`} />
+                    <SideButton label="로그아웃" icon={IoIosLogOut} is_logout={true} />
                 </div>
             )
             : (
                 // 둘 다 없을 경우 비회원 메뉴 실행
                 <div className="settings">
                     <hr />
-                    <Side_button label="로그인" icon={IoIosLogIn} endpoint="/login" />
-                    <Side_button label="회원가입" icon={FaRegUserCircle} endpoint="/signup" />
+                    <SideButton label="로그인" icon={IoIosLogIn} endpoint="/login" />
+                    <SideButton label="회원가입" icon={FaRegUserCircle} endpoint="/signup" />
                 </div>
             );
 

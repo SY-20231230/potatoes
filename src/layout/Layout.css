@@ -2,7 +2,6 @@
     position: relative;
 }
 
-/*지우면 카카오맵이 작동 안함*/
 .map {
     width: 93.8vw;
     height: 100vh;

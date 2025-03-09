@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 
-import "./User_settings.css";
+import "./UserSettings.css";
 
 import Toggle from "../../components/Toggle";
-import Side_button from '../../components/Side_button'
+import SideButton from '../../components/SideButton'
 
-const User_settings = () => {
+const UserSettings = () => {
     // 세션에서 가져온 변수값
     const [user_id, setUserId] = useState(sessionStorage.getItem("user_id"));
-    const [master_id, setMasterId] = useState(sessionStorage.getItem("master_id"));
 
     // 알림 수신 변수
     const [is_on, set_is_on] = useState(false);
 
     useEffect(() => {
         setUserId(sessionStorage.getItem("user_id"));
-        setMasterId(sessionStorage.getItem("master_id"));
     }, []);
 
     return (
@@ -27,17 +25,17 @@ const User_settings = () => {
                 </div>
 
                 <p>
-                    <Side_button
+                    <SideButton
                         label="즐겨찾기"
                         endpoint="/user/like"/>
                 </p>
                 <p>
-                    <Side_button
+                    <SideButton
                         label="신고 내역"
                         endpoint="/user/report"/>
                 </p>
                 <p>
-                    <Side_button
+                    <SideButton
                         label="경로 기록"
                         endpoint="/user/history"/>
                 </p>
@@ -51,4 +49,4 @@ const User_settings = () => {
     );
 }
 
-export default User_settings;
+export default UserSettings;
