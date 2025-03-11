@@ -1,5 +1,5 @@
 """
-URL configuration for myproject project.
+URL configuration for jolupdjango project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -15,20 +15,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path
 
-from myapp import views
-from django.views.generic import TemplateView
-from django.conf import settings
-from django.conf.urls.static import static
-"""
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
-]"""
-
-urlpatterns = [
-    path("", views.react_view, name="react"),  # 기본 경로에 React 렌더링
-]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-
+]
