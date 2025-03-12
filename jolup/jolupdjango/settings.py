@@ -12,12 +12,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import pymysql
+import os
 pymysql.install_as_MySQLdb()  # pymysql 사용 시 추가
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -41,13 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'jolupapp',
-    'rest_framework'
+    'corsheaders',  # CORS 설정 추가
+    'rest_framework',
 ]
-#언어를 한국어로 변경해준다.
-LANGUAGE_CODE = 'ko'
 
-#시간
-TIME_ZONE = 'Asia/Seoul'
 
 
 MIDDLEWARE = [
@@ -58,7 +57,20 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS 미들웨어 추가
 ]
+# CORS 설정 (React의 도메인 허용)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React 개발 서버 주소
+    
+]
+# Django REST Framework 기본 설정
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
 
 ROOT_URLCONF = 'jolupdjango.urls'
 
@@ -129,10 +141,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
+#언어를 한국어로 변경해준다.
+LANGUAGE_CODE = 'ko'
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+#시간
+TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 

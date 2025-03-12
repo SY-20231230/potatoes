@@ -48,7 +48,7 @@ class UserHistory(models.Model):  # 클래스명 변경
 
 class RoadReport(models.Model):  # 클래스명 변경
     roadreport_id = models.CharField(max_length=100, primary_key=True)
-    roadreport_image = models.CharField(max_length=255)
+    roadreport_image = models.ImageField(upload_to='images/',null=True,blank=True)
     roadreport_damagetype = models.CharField(max_length=50)
     roadreport_status = models.CharField(max_length=20)
     roadreport_time = models.DateTimeField(auto_now_add=True)
