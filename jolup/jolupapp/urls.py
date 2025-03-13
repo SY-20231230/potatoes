@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
-    MasterSignUp, MasterLogin, UserSignUp, UserLogin, UserSignOut, UserInfo,
+    MasterSignUp, MasterLogin, UserSignUp, UserLogin, UserSignOut, UserInfo,RoadReportSelectWithCoords,
     RoadReportAll, RoadReportSelect, HardwarePull, AiPull, RoadReportDelete, RoadReportEdit, UsersViewSet, MasterViewSet, UserHistoryViewSet, RoadReportViewSet
 )
 from . import views
@@ -36,5 +36,7 @@ urlpatterns = [
     # 하드웨어 정보 및 AI 관련 API
     path('hardware/pull', HardwarePull.as_view(), name='hardware-pull'),
     path('ai/pull', AiPull.as_view(), name='ai-pull'),
+    #위도와 경도 분리 api
+    path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),
 
 ]

@@ -145,6 +145,35 @@ class RoadReportImageUpload(APIView):
             return Response({'message': '이미지 업로드 성공'}, status=status.HTTP_200_OK)
         return Response({'error': '파일이 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
+#위도 경도 분리시키는 api
+class RoadReportSelectWithCoords(APIView):
+    def get(self, request, report_id):
+        """ 도로 보고 데이터를 가져올 때 위도/경도를 분리하여 응답 """
+        try:
+            report = get_object_or_404(RoadReport, roadreport_id=report_id)
+
+            # 예외 처리: roadreport_id가 None이거나 올바른 형식이 아닌 경우
+            if not report.roadreport_id or ',' not in report.roadreport_id:
+                return Response({'error': '잘못된 위치 데이터입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                latitude, longitude = map(float, report.roadreport_id.split(','))  # 실수형 변환
+            except ValueError:
+                return Response({'error': '위도/경도 값이 올바르지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            return Response({
+                'roadreport_id': report.roadreport_id,
+                'latitude': latitude,
+                'longitude': longitude,
+                'roadreport_damagetype': report.roadreport_damagetype,
+                'roadreport_status': report.roadreport_status,
+                'roadreport_time': report.roadreport_time,
+                'roadreport_region': report.roadreport_region
+            }, status=status.HTTP_200_OK)
+
+        except RoadReport.DoesNotExist:
+            return Response({'error': '도로 보고 데이터가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 def object_detection_stream(request):
