@@ -20,3 +20,5 @@ class RoadReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoadReport
         fields = "__all__"
+
+        
