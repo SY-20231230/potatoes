@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('object_detection_stream/', object_detection_stream, name='object_detection_stream'),
-    path('api/', include('jolupapp.urls')),
+    path('', include('jolupapp.urls')),
 ]
 
 #MEDIA URL 추가 (이미지 업로드 지원)

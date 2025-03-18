@@ -11,6 +11,10 @@ from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import default_storage
 from .models import Users, Master, UserHistory, RoadReport
+from django.http import JsonResponse
+
+def index(request): #임시 메인페이지 출력문
+    return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
 
 
 # Users ViewSet
@@ -69,7 +73,7 @@ class UserSignUp(APIView):
 
 #사용자 로그인 API
 class UserLogin(APIView):
-    def post(self, request):
+    def get(self, request):
         user_id = request.data.get('user_id')
         user_pw = request.data.get('user_pw')
 
