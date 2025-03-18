@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet } from "react-router-dom";  // ★ 추가
+import { Outlet } from "react-router-dom";
 import './Layout.css';
 
 import Header from "./Header";
