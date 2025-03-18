@@ -11,7 +11,7 @@ const Login = () => {
     });
 
     // 사용자 로그인
-    const handle_user = () => {
+    const handleUser = () => {
         setUser({user_id: "임시회원로그인", master_id: null});
 
         navigate('/')
@@ -22,7 +22,7 @@ const Login = () => {
     };
 
     // 관리자 로그인
-    const handle_master = () => {
+    const handleMaster = () => {
         setUser({user_id: null, master_id: "1"});
 
         navigate('/')
@@ -36,8 +36,8 @@ const Login = () => {
         <div className="login_content">
             <span>login</span>
             <br/>
-            <button onClick={handle_user}>회원</button>
-            <button onClick={handle_master}>관리자</button>
+            <button onClick={handleUser}>회원</button>
+            <button onClick={handleMaster}>관리자</button>
         </div>
     );
 };

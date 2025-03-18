@@ -1,15 +1,15 @@
 import React, {useState} from "react";
 import "./Toggle.css";
 
-const Toggle = ({label, is_on, set_is_on}) => {
-    const click_toggle = () => {
-        set_is_on(!is_on);
+const Toggle = ({label, isOn, setIsOn}) => {
+    const clickToggle = () => {
+        setIsOn(!isOn);
     };
 
     return (
         <button
-            className={`toggle_button ${is_on ? "on" : "off"}`}
-            onClick={click_toggle}>
+            className={`toggle_button ${isOn ? "on" : "off"}`}
+            onClick={clickToggle}>
             {label}
         </button>
     );

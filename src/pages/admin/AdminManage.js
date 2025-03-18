@@ -1,35 +1,37 @@
 import React, {useState} from "react";
-import './AdminManage.css';
-import Data from "../../Data_admin_manage";
-import {Link} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import Dropdown from 'react-dropdown';
+import './AdminManage.css';
 import "react-dropdown/style.css";
-
-// 샘플 데이터는 src/Data_admin_manage.js 위치에 있습니다.
 
 const AdminManage = () => {
 
-    const per_page = 10;
-    const [current_page, set_page] = useState(1);
+    const location = useLocation();
+    const reports = location.state?.fetchedData || [];
 
-    const total_pages = Math.ceil(Data.length / per_page);
-    const start_index = (current_page - 1) * per_page;
-    const current_data = Data.slice(start_index, start_index + per_page);
+    console.log("AdminManage 데이터: ", reports);
 
-    const change_page = (page) => {
-        set_page(page);
+    const perPage = 10;
+    const [currentPage, setPage] = useState(1);
+
+    const totalPages = Math.ceil(reports.length / perPage);
+    const startIndex = (currentPage - 1) * perPage;
+    const currentData = reports.slice(startIndex, startIndex + perPage);
+
+    const changePage = (page) => {
+        setPage(page);
     };
 
-    const [is_modal_open, set_is_modal_open] = useState(false);
-    const [modal_image, set_modal_image] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalImage, setModalImage] = useState("");
 
     const open_modal = (image) => {
-        set_modal_image(image);
-        set_is_modal_open(true);
+        setModalImage(image);
+        setIsModalOpen(true);
     };
 
-    const close_modal = () => {
-        set_is_modal_open(false);
+    const closeModal = () => {
+        setIsModalOpen(false);
     };
 
     const options = [
@@ -38,8 +40,6 @@ const AdminManage = () => {
         {value: '해결됨', label: '해결됨'},
         {value: '보류중', label: '보류중'},
     ];
-    const defaultOption = options[0];
-
 
     return (
         <div className="admin_manage">
@@ -47,8 +47,8 @@ const AdminManage = () => {
             <table className="data_table">
                 <thead className="table_head">
                 <tr>
-                    <td>No</td>
-                    <td>id</td>
+                    <td>num</td>
+                    <td>let,lng</td>
                     <td>image</td>
                     <td>damage_type</td>
                     <td>status</td>
@@ -58,24 +58,24 @@ const AdminManage = () => {
                 </tr>
                 </thead>
                 <tbody className="table_body">
-                {current_data.map((roadreport, index) => (
+                {currentData.map((road, index) => (
                     <tr key={index}>
-                        <td className="no">{start_index + index + 1}</td>
-                        <td className="id">{roadreport.col1}</td>
+                        <td className="num">{road.roadreport_num}</td>
+                        <td className="id">{road.roadreport_id}</td>
                         <td className="image">
                             <img
-                                src={`/images/${roadreport.col2}`}
-                                alt={`image ${start_index + index}`}
+                                src={road.roadreport_image}
+                                alt={`image ${startIndex + index}`}
                                 className="clickable-image"
-                                onClick={() => open_modal(`/images/${roadreport.col2}`)}
+                                onClick={() => open_modal(road.roadreport_image)}
                             />
                         </td>
-                        <td className="damage_type">{Array.isArray(roadreport.col3) ? roadreport.col3.join(', ') : roadreport.col3}</td>
+                        <td className="damage_type">{road.roadreport_damagetype}</td>
                         <td className="status">
-                            <Dropdown options={options} value={roadreport.col4} />
+                            <Dropdown options={options} value={road.roadreport_status}/>
                         </td>
-                        <td className="time">{roadreport.col5}</td>
-                        <td className="region">{roadreport.col6}</td>
+                        <td className="time">{road.roadreport_time}</td>
+                        <td className="region">{road.roadreport_region || '-'}</td>
                         <td className="edit">
                             <button>위치</button>
                             <button>삭제</button>
@@ -86,19 +86,19 @@ const AdminManage = () => {
             </table>
 
             <div className="pagination">
-                {Array.from({length: total_pages}, (_, index) => (
-                    <button key={index} className={`page_button ${current_page === index + 1 ? 'active' : ''}`}
-                            onClick={() => change_page(index + 1)}>
+                {Array.from({length: totalPages}, (_, index) => (
+                    <button key={index} className={`page_button ${currentPage === index + 1 ? 'active' : ''}`}
+                            onClick={() => changePage(index + 1)}>
                         {index + 1}
                     </button>
                 ))}
             </div>
 
-            {is_modal_open && (
-                <div className="modal-background" onClick={close_modal}>
+            {isModalOpen && (
+                <div className="modal-background" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={close_modal}>X</button>
-                        <img src={modal_image} alt="Modal" className="modal-image"/>
+                        <button className="modal-close" onClick={closeModal}>X</button>
+                        <img src={modalImage} alt="Modal" className="modal-image"/>
                     </div>
                 </div>
             )}

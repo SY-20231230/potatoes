@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import "./Signup.css";
 
 const Signup = () => {
-    const [users, set_form_data] = useState({
+    const [users, setFormData] = useState({
         user_id: "",
         user_pw: "",
         conf_user_pw: "",
@@ -11,15 +11,15 @@ const Signup = () => {
         user_phonenumber: "",
     });
 
-    const handle_change = (e) => {
+    const handleChange = (e) => {
         const {name, value} = e.target;
-        set_form_data((prev_data) => ({
+        setFormData((prev_data) => ({
             ...prev_data,
             [name]: value,
         }));
     };
 
-    const handle_submit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         if (users.user_pw !== users.conf_user_pw) {
             alert("비밀번호가 일치하지 않습니다.");
@@ -34,7 +34,7 @@ const Signup = () => {
             <span className="signup_label">회원가입</span>
             <br/>
             <br/>
-            <form className="signup_form" onSubmit={handle_submit}>
+            <form className="signup_form" onSubmit={handleSubmit}>
                 <div className="form_group">
                     <div className="per_form">
                         <label>아이디</label>
@@ -43,7 +43,7 @@ const Signup = () => {
                             id="user_id"
                             name="user_id"
                             value={users.user_id}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -54,7 +54,7 @@ const Signup = () => {
                             id="user_pw"
                             name="user_pw"
                             value={users.user_pw}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -65,7 +65,7 @@ const Signup = () => {
                             id="conf_user_pw"
                             name="conf_user_pw"
                             value={users.conf_user_pw}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -77,7 +77,7 @@ const Signup = () => {
                             id="user_name"
                             name="user_name"
                             value={users.user_name}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -88,7 +88,7 @@ const Signup = () => {
                             id="user_age"
                             name="user_age"
                             value={users.user_age}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -103,7 +103,7 @@ const Signup = () => {
                             onInput={(e) => {
                                 e.target.value = e.target.value.replace(/[^0-9]/g, "");
                             }}
-                            onChange={handle_change}
+                            onChange={handleChange}
                             required
                         />
                     </div>

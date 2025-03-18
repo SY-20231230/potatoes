@@ -2,16 +2,22 @@ import React, {useEffect} from "react";
 import './AdminData.css';
 
 import CountEvent from "../../components/CountEvent";
+import {useLocation} from "react-router-dom";
 
 const AdminData = () => {
 
     // 데이터 연결되기 전까지 테스트용 난수 생성한 것 
     // 변수 넘기면 주석 처리하고 확인해주세요
-    const generate_random_count = () => {
+    const generateRandomCount = () => {
         return Math.floor(Math.random() * 1000000).toLocaleString();
     };
 
-    const count = Array.from({length: 13}, generate_random_count);
+    const location = useLocation();
+    const roadData = location.state?.fetchedData || [];
+
+    console.log("AdminData 데이터: ", roadData);
+
+    const count = Array.from({length: 13}, generateRandomCount);
     return (
         <div className="admin_data">
             <div className="stack_event">

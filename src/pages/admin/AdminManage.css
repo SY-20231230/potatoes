@@ -21,7 +21,7 @@
     border: solid 0.1vh gray;
 }
 
-.table_body .no {
+.table_body .num {
     width: 2vw;
     font-weight: bold;
     text-align: center;
