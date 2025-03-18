@@ -55,6 +55,16 @@ class RoadReport(models.Model):  # 클래스명 변경
     roadreport_region = models.CharField(max_length=255)
     roadreport_direction = models.FloatField(null=True, blank=True)  # 추가된 필드 (방향)
     roadreport_speed = models.FloatField(null=True, blank=True)  # 추가된 필드 (속도)
+    roadreport_num = models.IntegerField(null=True, blank=True)  # 수동 증가 필드
+    def save(self, *args, **kwargs):
+        """ roadreport_num을 자동 증가시키는 로직 추가 """
+        if not self.roadreport_num:
+            last_report = RoadReport.objects.order_by('-roadreport_num').first()
+            if last_report:
+                self.roadreport_num = last_report.roadreport_num + 1
+            else:
+                self.roadreport_num = 1  # 첫 번째 데이터는 1부터 시작
+        super().save(*args, **kwargs)
 
     class Meta:
         db_table = 'roadreport'
@@ -66,3 +76,6 @@ class RoadReport(models.Model):  # 클래스명 변경
 클래스명은 CamelCase를 따름 (userhistory → UserHistory, roadreport → RoadReport).
 ForeignKey 설정은 적절하지만, 필요하면 ManyToManyField 고려 가능.
 make_password()를 이용한 비밀번호 암호화 유지"""
+
+
+

@@ -20,7 +20,7 @@ pymysql.install_as_MySQLdb()  # pymysql 사용 시 추가
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
+APPEND_SLASH = True  # (기본값) URL 끝에 /가 없으면 자동으로 추가
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -159,7 +159,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
