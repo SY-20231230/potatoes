@@ -12,6 +12,8 @@ from django.shortcuts import get_object_or_404
 from django.core.files.storage import default_storage
 from .models import Users, Master, UserHistory, RoadReport
 from django.http import JsonResponse
+import pytz
+from datetime import datetime
 
 def index(request): #임시 메인페이지 출력문
     return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
@@ -142,8 +144,35 @@ class RoadReportEdit(APIView):
 
 #하드웨어 데이터 요청 API
 class HardwarePull(APIView):
-    def get(self, request):
-        return Response({'message': '하드웨어 데이터 조회'}, status=status.HTTP_200_OK)
+    def post(self, request):
+        try:
+            data = request.data
+
+            kst_time = data.get("kst_time")
+            lat_lon = data.get("lat_lon")
+            speed = data.get("speed")
+            course = data.get("course")
+
+            
+
+            roadreport_time = datetime.strptime(kst_time, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+
+            # `roadreport_num`을 직접 할당하지 않음 → 자동 증가
+            new_report = RoadReport.objects.create(
+                roadreport_id=lat_lon,
+                roadreport_time=roadreport_time,
+                roadreport_speed=speed,
+                roadreport_direction=course
+            )
+
+            return Response({
+                "message": "하드웨어 데이터 저장 완료!",
+                "report_id": new_report.roadreport_id,
+                "num": new_report.roadreport_num
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #AI 데이터 요청 API
 class AiPull(APIView):
