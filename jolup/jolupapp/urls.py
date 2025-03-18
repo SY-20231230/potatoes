@@ -35,7 +35,7 @@ urlpatterns = [
     path('roadreport/edit', RoadReportEdit.as_view(), name='roadreport-edit'),
 
     # 하드웨어 정보 및 AI 관련 API
-    path('hardware/pull', HardwarePull.as_view(), name='hardware-pull'),
+    path('hardware/pull/', HardwarePull.as_view(), name='hardware-pull'),
     path('ai/pull', AiPull.as_view(), name='ai-pull'),
     #위도와 경도 분리 api
     path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),

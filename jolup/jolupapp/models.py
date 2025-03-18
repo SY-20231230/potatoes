@@ -38,34 +38,26 @@ class Master(models.Model):
 
 class UserHistory(models.Model):  # 클래스명 변경
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='road_records') 
-    userhistory_start = models.CharField(max_length=255)
-    userhistory_end = models.CharField(max_length=255)
-    userhistory_via = models.CharField(max_length=255)
+    userhistory_start = models.CharField(max_length=255,null=True)
+    userhistory_end = models.CharField(max_length=255,null=True)
+    userhistory_via = models.CharField(max_length=255,null=True)
     userhistory_searchtime = models.DateTimeField(auto_now_add=True)  
 
     class Meta:
         db_table = 'userhistory'
 
 class RoadReport(models.Model):  # 클래스명 변경
-    roadreport_id = models.CharField(max_length=100, primary_key=True)
+    roadreport_num = models.AutoField(primary_key=True)  #새로운 프라이머리 키 설정
+    roadreport_id = models.CharField(max_length=100)
     roadreport_image = models.ImageField(upload_to='images/',null=True,blank=True)
-    roadreport_damagetype = models.CharField(max_length=50)
-    roadreport_status = models.CharField(max_length=20)
-    roadreport_time = models.DateTimeField(auto_now_add=True)
-    roadreport_region = models.CharField(max_length=255)
+    roadreport_damagetype = models.CharField(max_length=50,null=True)
+    roadreport_status = models.CharField(max_length=20,null=True)
+    roadreport_time = models.DateTimeField(auto_now_add=True,null=True)
+    roadreport_region = models.CharField(max_length=255,null=True)
     roadreport_direction = models.FloatField(null=True, blank=True)  # 추가된 필드 (방향)
     roadreport_speed = models.FloatField(null=True, blank=True)  # 추가된 필드 (속도)
-    roadreport_num = models.IntegerField(null=True, blank=True)  # 수동 증가 필드
-    def save(self, *args, **kwargs):
-        """ roadreport_num을 자동 증가시키는 로직 추가 """
-        if not self.roadreport_num:
-            last_report = RoadReport.objects.order_by('-roadreport_num').first()
-            if last_report:
-                self.roadreport_num = last_report.roadreport_num + 1
-            else:
-                self.roadreport_num = 1  # 첫 번째 데이터는 1부터 시작
-        super().save(*args, **kwargs)
-
+    
+    
     class Meta:
         db_table = 'roadreport'
 
