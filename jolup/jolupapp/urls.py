@@ -29,12 +29,13 @@ urlpatterns = [
 
     # 도로 보고 API
     path('roadreport/all', RoadReportAll.as_view(), name='roadreport-all'),
-    path('roadreport/select', RoadReportSelect.as_view(), name='roadreport-select'),
+    path('roadreport/select/<str:roadreport_id>/', RoadReportSelect.as_view(), name='roadreport-select'),
+    #path('roadreport/select', RoadReportSelect.as_view(), name='roadreport-select'),
     path('roadreport/delete', RoadReportDelete.as_view(), name='roadreport-delete'),
     path('roadreport/edit', RoadReportEdit.as_view(), name='roadreport-edit'),
 
     # 하드웨어 정보 및 AI 관련 API
-    path('hardware/pull', HardwarePull.as_view(), name='hardware-pull'),
+    path('hardware/pull/', HardwarePull.as_view(), name='hardware-pull'),
     path('ai/pull', AiPull.as_view(), name='ai-pull'),
     #위도와 경도 분리 api
     path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),

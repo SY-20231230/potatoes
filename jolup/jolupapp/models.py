@@ -38,22 +38,26 @@ class Master(models.Model):
 
 class UserHistory(models.Model):  # 클래스명 변경
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='road_records') 
-    userhistory_start = models.CharField(max_length=255)
-    userhistory_end = models.CharField(max_length=255)
-    userhistory_via = models.CharField(max_length=255)
+    userhistory_start = models.CharField(max_length=255,null=True)
+    userhistory_end = models.CharField(max_length=255,null=True)
+    userhistory_via = models.CharField(max_length=255,null=True)
     userhistory_searchtime = models.DateTimeField(auto_now_add=True)  
 
     class Meta:
         db_table = 'userhistory'
 
 class RoadReport(models.Model):  # 클래스명 변경
-    roadreport_id = models.CharField(max_length=100, primary_key=True)
+    roadreport_num = models.AutoField(primary_key=True)  #새로운 프라이머리 키 설정
+    roadreport_id = models.CharField(max_length=100)
     roadreport_image = models.ImageField(upload_to='images/',null=True,blank=True)
-    roadreport_damagetype = models.CharField(max_length=50)
-    roadreport_status = models.CharField(max_length=20)
-    roadreport_time = models.DateTimeField(auto_now_add=True)
-    roadreport_region = models.CharField(max_length=255)
-
+    roadreport_damagetype = models.CharField(max_length=50,null=True)
+    roadreport_status = models.CharField(max_length=20,null=True)
+    roadreport_time = models.DateTimeField(auto_now_add=True,null=True)
+    roadreport_region = models.CharField(max_length=255,null=True)
+    roadreport_direction = models.FloatField(null=True, blank=True)  # 추가된 필드 (방향)
+    roadreport_speed = models.FloatField(null=True, blank=True)  # 추가된 필드 (속도)
+    
+    
     class Meta:
         db_table = 'roadreport'
 
@@ -64,3 +68,6 @@ class RoadReport(models.Model):  # 클래스명 변경
 클래스명은 CamelCase를 따름 (userhistory → UserHistory, roadreport → RoadReport).
 ForeignKey 설정은 적절하지만, 필요하면 ManyToManyField 고려 가능.
 make_password()를 이용한 비밀번호 암호화 유지"""
+
+
+

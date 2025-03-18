@@ -20,7 +20,7 @@ pymysql.install_as_MySQLdb()  # pymysql 사용 시 추가
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
+APPEND_SLASH = True  # (기본값) URL 끝에 /가 없으면 자동으로 추가
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -30,7 +30,12 @@ SECRET_KEY = 'django-insecure-)#4x(d_f-91+(^4%+(o=2!zm%mofl*_kc2ud$_shuz@7aqd=ce
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '*',
+    #"192.168.0.157",
+    #"localhost",
+    #"127.0.0.1",
+]
 
 
 # Application definition
@@ -60,10 +65,15 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # CORS 미들웨어 추가
 ]
 # CORS 설정 (React의 도메인 허용)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React 개발 서버 주소
+CORS_ALLOW_ALL_ORIGINS = True 
+#CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:3000",  # React 개발 서버 주소
+ #   "http://127.0.0.1:8000",
+  #  "http://localhost:8000",
+   # "http://192.168.0.162:3000"
     
-]
+#]
+CORS_ALLOW_CREDENTIALS = True
 # Django REST Framework 기본 설정
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -110,7 +120,7 @@ DATABASES = {
         'NAME': 'jolupdb',  # 생성한 DB 이름
         'USER': 'root',  # MySQL 사용자명 (변경 가능)
         'PASSWORD': 'yhkcar@!0293',  # MySQL 비밀번호 입력
-        'HOST': 'localhost',  # MySQL 서버 주소 (기본값: localhost)
+        'HOST': '127.0.0.1',  # MySQL 서버 주소 (기본값: localhost)
         'PORT': '3306',  # MySQL 기본 포트 (3306)
         'OPTIONS': {
             'charset': 'utf8mb4',  # 한글 및 특수문자 지원
@@ -149,7 +159,7 @@ TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

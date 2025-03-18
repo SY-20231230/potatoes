@@ -11,6 +11,12 @@ from rest_framework import status, viewsets
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import default_storage
 from .models import Users, Master, UserHistory, RoadReport
+from django.http import JsonResponse
+import pytz
+from datetime import datetime
+
+def index(request): #임시 메인페이지 출력문
+    return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
 
 
 # Users ViewSet
@@ -69,7 +75,7 @@ class UserSignUp(APIView):
 
 #사용자 로그인 API
 class UserLogin(APIView):
-    def post(self, request):
+    def get(self, request):
         user_id = request.data.get('user_id')
         user_pw = request.data.get('user_pw')
 
@@ -102,23 +108,34 @@ class RoadReportAll(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 #특정 도로 보고 조회 API
+#class RoadReportSelect(APIView):
+ #   def get(self, request, roadreport_id):
+  #      report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
+   #     serializer = RoadReportSerializer(report)
+    #
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 class RoadReportSelect(APIView):
-    def get(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def get(self, request, roadreport_id):
+        # roadreport_id가 정확히 일치하는 데이터 조회
+        report = RoadReport.objects.filter(roadreport_id=roadreport_id).first()
+
+        if not report:
+            return Response({'error': '해당 roadreport_id가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = RoadReportSerializer(report)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)    
 
 #도로 보고 삭제 API
 class RoadReportDelete(APIView):
-    def delete(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def delete(self, request, roadreport_id):
+        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
         report.delete()
         return Response({'message': '도로 보고 삭제 완료'}, status=status.HTTP_204_NO_CONTENT)
 
 #도로 보고 수정 API
 class RoadReportEdit(APIView):
-    def put(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def put(self, request, roadreport_id):
+        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
         serializer = RoadReportSerializer(report, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -127,8 +144,35 @@ class RoadReportEdit(APIView):
 
 #하드웨어 데이터 요청 API
 class HardwarePull(APIView):
-    def get(self, request):
-        return Response({'message': '하드웨어 데이터 조회'}, status=status.HTTP_200_OK)
+    def post(self, request):
+        try:
+            data = request.data
+
+            kst_time = data.get("kst_time")
+            lat_lon = data.get("lat_lon")
+            speed = data.get("speed")
+            course = data.get("course")
+
+            
+
+            roadreport_time = datetime.strptime(kst_time, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+
+            # `roadreport_num`을 직접 할당하지 않음 → 자동 증가
+            new_report = RoadReport.objects.create(
+                roadreport_id=lat_lon,
+                roadreport_time=roadreport_time,
+                roadreport_speed=speed,
+                roadreport_direction=course
+            )
+
+            return Response({
+                "message": "하드웨어 데이터 저장 완료!",
+                "report_id": new_report.roadreport_id,
+                "num": new_report.roadreport_num
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 #AI 데이터 요청 API
 class AiPull(APIView):
