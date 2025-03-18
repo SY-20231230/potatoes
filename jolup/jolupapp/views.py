@@ -106,23 +106,34 @@ class RoadReportAll(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 #특정 도로 보고 조회 API
+#class RoadReportSelect(APIView):
+ #   def get(self, request, roadreport_id):
+  #      report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
+   #     serializer = RoadReportSerializer(report)
+    #
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 class RoadReportSelect(APIView):
-    def get(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def get(self, request, roadreport_id):
+        # roadreport_id가 정확히 일치하는 데이터 조회
+        report = RoadReport.objects.filter(roadreport_id=roadreport_id).first()
+
+        if not report:
+            return Response({'error': '해당 roadreport_id가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = RoadReportSerializer(report)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)    
 
 #도로 보고 삭제 API
 class RoadReportDelete(APIView):
-    def delete(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def delete(self, request, roadreport_id):
+        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
         report.delete()
         return Response({'message': '도로 보고 삭제 완료'}, status=status.HTTP_204_NO_CONTENT)
 
 #도로 보고 수정 API
 class RoadReportEdit(APIView):
-    def put(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+    def put(self, request, roadreport_id):
+        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
         serializer = RoadReportSerializer(report, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
