@@ -25,11 +25,11 @@ urlpatterns = [
     path('users/signup', UserSignUp.as_view(), name='user-signup'),
     path('users/login', UserLogin.as_view(), name='user-login'),
     path('users/signout', UserSignOut.as_view(), name='user-signout'),
-    path('users/info', UserInfo.as_view(), name='user-info'),
+    path('users/info/<str:user_id>/', UserInfo.as_view(), name='user-info'),
 
     # 도로 보고 API
     path('roadreport/all', RoadReportAll.as_view(), name='roadreport-all'),
-    path('roadreport/select/<str:roadreport_id>/', RoadReportSelect.as_view(), name='roadreport-select'),
+    path('roadreport/select/<str:roadreport_num>/', RoadReportSelect.as_view(), name='roadreport-select'),
     #path('roadreport/select', RoadReportSelect.as_view(), name='roadreport-select'),
     path('roadreport/delete', RoadReportDelete.as_view(), name='roadreport-delete'),
     path('roadreport/edit', RoadReportEdit.as_view(), name='roadreport-edit'),
