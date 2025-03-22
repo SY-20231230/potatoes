@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 
-import "./UserSettings.css";
+import "./UserInfo.css";
 
 import Toggle from "../../components/Toggle";
 import GetButton from '../../components/GetButton'
 
-const UserSettings = () => {
+const UserInfo = () => {
     // 세션에서 가져온 변수값
     const [user_id, setUserId] = useState(sessionStorage.getItem("user_id"));
 
@@ -49,4 +49,4 @@ const UserSettings = () => {
     );
 }
 
-export default UserSettings;
+export default UserInfo;

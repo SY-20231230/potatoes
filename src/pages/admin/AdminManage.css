@@ -30,13 +30,13 @@
 .table_body .image {
     text-align: center;
     width: 2.5vw;
-    height: 3vh;
+    height: 7vh;
     padding: 0.4vh 0 0 0;
 }
 
 .table_body img {
     max-width: 4vw;
-    max-height: 3vw;
+    max-height: 7vh;
     cursor: pointer;
 }
 
@@ -52,7 +52,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 200;
 }
 
 .modal-content {
@@ -69,7 +69,7 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    z-index: 110;
+    z-index: 250;
 }
 
 .modal-image {
@@ -134,7 +134,7 @@
     right: 10%;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 500;
+    z-index: 100;
     border-color: black transparent transparent;
 }
 
@@ -144,7 +144,7 @@
 
 .status .Dropdown-menu {
     position: absolute;
-    z-index: 1000;
+    z-index: 150;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     white-space: nowrap;
 

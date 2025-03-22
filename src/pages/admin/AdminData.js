@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import './AdminData.css';
 
 import CountEvent from "../../components/CountEvent";

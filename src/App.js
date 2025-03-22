@@ -1,6 +1,6 @@
 import React from "react";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import { NavermapsProvider } from 'react-naver-maps';
+import {NavermapsProvider} from 'react-naver-maps';
 
 import Layout from "./layout/Layout";
 
@@ -14,7 +14,7 @@ import Directions from "./pages/navi/Directions";
 import Porthole from "./pages/navi/Porthole";
 import Place from "./pages/navi/PlaceSearch";
 
-import UserSettings from "./pages/user/UserSettings";
+import UserInfo from "./pages/user/UserInfo";
 import UserLike from "./pages/user/UserLike";
 import UserReport from "./pages/user/UserReport";
 import UserHistory from "./pages/user/UserHistory";
@@ -33,7 +33,7 @@ function App() {
 
     return (
         <NavermapsProvider
-            ncpClientId = {naverMapClientId}
+            ncpClientId={naverMapClientId}
         >
             <BrowserRouter>
                 <Routes>
@@ -53,7 +53,7 @@ function App() {
                         <Route path="place" element={<Place/>}/>
 
                         {/* 사용자 */}
-                        <Route path="user/settings" element={<UserSettings/>}/>
+                        <Route path="user/info" element={<UserInfo/>}/>
                         <Route path="user/like" element={<UserLike/>}/>
                         <Route path="user/report" element={<UserReport/>}/>
                         <Route path="user/history" element={<UserHistory/>}/>
