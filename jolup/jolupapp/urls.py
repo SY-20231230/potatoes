@@ -2,7 +2,8 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     MasterSignUp, MasterLogin, UserSignUp, UserLogin, UserSignOut, UserInfo,RoadReportSelectWithCoords,
-    RoadReportAll, RoadReportSelect, HardwarePull, AiPull, RoadReportDelete, RoadReportEdit, UsersViewSet, MasterViewSet, UserHistoryViewSet, RoadReportViewSet
+    RoadReportAll, RoadReportSelect, HardwarePull, AiPull, RoadReportDelete, RoadReportEdit, UsersViewSet, MasterViewSet, UserHistoryViewSet, RoadReportViewSet,
+    NaverMapProxy,RoadReportCreate
 )
 from . import views
 # Router 설정
@@ -39,5 +40,8 @@ urlpatterns = [
     path('ai/pull', AiPull.as_view(), name='ai-pull'),
     #위도와 경도 분리 api
     path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),
-
+    #naver 지도 api
+    path('naver/proxy/', NaverMapProxy.as_view(), name='naver_map_proxy'),
+    # 도로 보고 이미지 업로드 API
+    path("roadreport/create", RoadReportCreate.as_view()),
 ]

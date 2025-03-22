@@ -14,7 +14,7 @@ from .models import Users, Master, UserHistory, RoadReport
 from django.http import JsonResponse
 import pytz
 from datetime import datetime
-
+import requests
 def index(request): #임시 메인페이지 출력문
     return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
 
@@ -261,3 +261,35 @@ def object_detection_stream(request):
 
     return StreamingHttpResponse(video_frame_generator(), content_type='multipart/x-mixed-replace; boundary=frame')
 
+#naver 지도 관련련
+class NaverMapProxy(APIView):
+    def get(self, request):
+        # 예: 위도 경도 파라미터 받기
+        lat = request.query_params.get('lat')
+        lon = request.query_params.get('lon')
+
+        # 네이버 지도 API 엔드포인트
+        url = f"https://naveropenapi.com/maps/example?lat={lat}&lon={lon}"
+
+        headers = {
+            'X-NCP-APIGW-API-KEY-ID': 'YOUR_CLIENT_ID',
+            'X-NCP-APIGW-API-KEY': 'YOUR_CLIENT_SECRET',
+        }
+
+        # 네이버 지도 API 호출
+        naver_response = requests.get(url, headers=headers)
+
+        # 응답을 프론트엔드로 그대로 전달
+        return Response(naver_response.json(), status=naver_response.status_code)
+    
+class RoadReportCreate(APIView):
+    def post(self, request):
+        data = request.data
+        report = RoadReport.objects.create(
+            roadreport_time=data['roadreport_time'],
+            roadreport_image=data['roadreport_image'],
+            roadreport_id=data['roadreport_id'],
+            roadreport_speed=data['roadreport_speed'],
+            roadreport_direction=data['roadreport_direction'],
+        )
+        return Response({"message": "성공"}, status=201)
