@@ -122,37 +122,9 @@ const HomeMap = () => {
 
     }, []);
 
-    const toggleInteraction = () => {
-        if (!mapInstance.current) return;
-        const newState = !interactionOn;
-        setInteractionOn(newState);
-        mapInstance.current.setOptions({
-            draggable: newState,
-            pinchZoom: newState,
-            scrollWheel: newState,
-            keyboardShortcuts: newState,
-            disableDoubleTapZoom: !newState,
-            disableDoubleClickZoom: !newState,
-            disableTwoFingerTapZoom: !newState,
-        });
-    };
-
-    const toggleControls = () => {
-        if (!mapInstance.current) return;
-        const newState = !controlsOn;
-        setControlsOn(newState);
-        mapInstance.current.setOptions({
-            scaleControl: newState,
-            logoControl: newState,
-            mapDataControl: newState,
-            zoomControl: newState,
-            mapTypeControl: newState,
-        });
-    };
-
     return (
         <>
-            <div id="map" ref={mapRef} style={{width: "93.9%", height: "725px", marginBottom: "10px"}}/>
+            <div id="map" ref={mapRef} style={{width: "93.9%", height: "100%", marginBottom: "10px"}}/>
         </>
     );
 };

@@ -2,6 +2,7 @@ import React from "react";
 import {Link} from "react-router-dom";
 import "./Sidebar.css";
 import GetButton from "../components/GetButton";
+import TestGetButton from "../components/TestGetButton";
 
 // menu icon
 import {FaDirections} from "react-icons/fa";
@@ -36,7 +37,7 @@ const Sidebar = () => {
             <GetButton label="길찾기" icon={FaDirections} path={`/directions`} endpoint={``}/>
             <GetButton label="포트홀" icon={GiHole} path={`/porthole`} endpoint={``}/>
             <GetButton label="장소 (클릭X)" icon={MdPlace} path={`/place`} endpoint={``}/>
-            <GetButton label="테스트" path={`/test`} endpoint="/test"/>
+            <TestGetButton label="테스트" path={`/test`}/>
         </div>
     );
 
@@ -58,7 +59,7 @@ const Sidebar = () => {
                 // master_id가 없고, user_id가 있을 경우 회원 메뉴 실행
                 <div className="settings">
                     <hr/>
-                    <GetButton label={truncLabel} icon={FaRegUserCircle} path={`users/info`} endpoint={``}/>
+                    <GetButton label={truncLabel} icon={FaRegUserCircle} path={`user/info`} endpoint={``}/>
                     <GetButton label="로그아웃" icon={IoIosLogOut} isLogout={true}/>
                 </div>
             )
