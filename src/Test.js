@@ -1,12 +1,11 @@
 // HomeMap.js
 import React, {useEffect, useRef, useState} from "react";
 import GetButton from "./components/GetButton";
-import TestGetButton from "./components/TestGetButton";
 
 const Test = () => {
     const naver = window.naver;
-    const mapRef = useRef(null); // HTML 요소 참조
-    const mapInstance = useRef(null); // naver map 인스턴스 저장용
+    const mapRef = useRef(null);
+    const mapInstance = useRef(null);
 
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
@@ -54,8 +53,8 @@ const Test = () => {
             <div id="map" ref={mapRef} style={{width: "90%", height: "600px", marginBottom: "10px"}}/>
             <GetButton label="출발지 네이버"
                        endpoint={`start=127.12345,37.12345`}></GetButton>
-            <TestGetButton label="테스트 버튼"
-                           endpoint={`naver/proxy/goal=129.075986%2C35.179470&start=127.1058342%2C37.359708`}></TestGetButton>
+            <GetButton label="테스트 버튼"
+                           endpoint={`naver/proxy/goal=129.075986%2C35.179470&start=127.1058342%2C37.359708`}></GetButton>
         </>
     );
 };

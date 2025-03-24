@@ -2,12 +2,10 @@ import React from "react";
 import {Link} from "react-router-dom";
 import "./Sidebar.css";
 import GetButton from "../components/GetButton";
-import TestGetButton from "../components/TestGetButton";
 
 // menu icon
 import {FaDirections} from "react-icons/fa";
-import {GiHole} from "react-icons/gi";
-import {MdPlace} from "react-icons/md";
+import {FaRegMap} from "react-icons/fa";
 
 // admin icon
 import {FcStatistics} from "react-icons/fc";
@@ -15,6 +13,7 @@ import {MdManageSearch} from "react-icons/md";
 
 // session icon
 import {IoIosLogIn, IoIosLogOut} from "react-icons/io";
+import { FaRegStar } from "react-icons/fa";
 import {FaRegUserCircle} from "react-icons/fa";
 
 const Sidebar = () => {
@@ -30,14 +29,10 @@ const Sidebar = () => {
     // 공통 메뉴
     const commonMenu = (
         <div className="menu">
-            <Link to="/">
-                <img src="/media/logo_Doro-See.png" alt="Logo" className="img_logo"/>
-            </Link>
-
             <GetButton label="길찾기" icon={FaDirections} path={`/directions`} endpoint={``}/>
-            <GetButton label="포트홀" icon={GiHole} path={`/porthole`} endpoint={``}/>
-            <GetButton label="장소 (클릭X)" icon={MdPlace} path={`/place`} endpoint={``}/>
-            <TestGetButton label="테스트" path={`/test`}/>
+            <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`} endpoint={``}/>
+            <GetButton label="테스트1" path={`/test`}/>
+            <GetButton label="테스트2" path={`/test2`} endpoint={`roadreport/all`}/>
         </div>
     );
 
@@ -48,9 +43,9 @@ const Sidebar = () => {
         ? (
             // master_id가 있을 경우 관리자 메뉴 실행
             <div className="settings">
-                <hr/>
-                <GetButton label="파손 통계" icon={FcStatistics} path={`/admin/data`} endpoint={`roadreport/select`}/>
+                <GetButton label="파손 통계" icon={FcStatistics} path={`/admin/data`} endpoint={`roadreport/all`}/>
                 <GetButton label="파손 관리" icon={MdManageSearch} path={`/admin/manage`} endpoint={`roadreport/all`}/>
+                <hr/>
                 <GetButton label="로그아웃" icon={FaRegUserCircle} isLogout={true}/>
             </div>
         )
@@ -58,6 +53,7 @@ const Sidebar = () => {
             ? (
                 // master_id가 없고, user_id가 있을 경우 회원 메뉴 실행
                 <div className="settings">
+                    <GetButton label="즐겨찾기" icon={FaRegStar} path={`user/like`} endpoint={``}/>
                     <hr/>
                     <GetButton label={truncLabel} icon={FaRegUserCircle} path={`user/info`} endpoint={``}/>
                     <GetButton label="로그아웃" icon={IoIosLogOut} isLogout={true}/>
@@ -74,6 +70,11 @@ const Sidebar = () => {
 
     return (
         <div className="sidebar">
+
+            <Link to="/">
+                <img src="/media/logo_Doro-See.png" alt="Logo" className="img_logo"/>
+            </Link>
+
             {commonMenu}
             {settingsMenu}
         </div>
