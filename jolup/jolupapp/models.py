@@ -53,7 +53,6 @@ class RoadReport(models.Model):  # 클래스명 변경
     roadreport_damagetype = models.CharField(max_length=50,null=True)
     roadreport_status = models.CharField(max_length=20,null=True)
     roadreport_time = models.DateTimeField(auto_now_add=True,null=True)
-    roadreport_region = models.CharField(max_length=255,null=True)
     roadreport_direction = models.FloatField(null=True, blank=True)  # 추가된 필드 (방향)
     roadreport_speed = models.FloatField(null=True, blank=True)  # 추가된 필드 (속도)
     
