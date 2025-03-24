@@ -2,6 +2,7 @@ import cv2
 from django.shortcuts import render
 from django.http import StreamingHttpResponse
 import time
+import os
 # Create your views here.
 from .serializers import UsersSerializer, MasterSerializer, UserHistorySerializer, RoadReportSerializer
 from django.contrib.auth.hashers import make_password, check_password
@@ -15,6 +16,7 @@ from django.http import JsonResponse
 import pytz
 from datetime import datetime
 import requests
+from django.conf import settings
 def index(request): #임시 메인페이지 출력문
     return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
 
@@ -147,33 +149,44 @@ class RoadReportEdit(APIView):
 class HardwarePull(APIView):
     def post(self, request):
         try:
-            data = request.data
+            # 1. 네트워크 시간 기준으로 파일 이름 생성
+            kst = pytz.timezone('Asia/Seoul')
+            kst_time = datetime.now(kst)
+            filename = kst_time.strftime('%Y%m%d_%H%M%S') + '.jpg'
 
-            kst_time = data.get("kst_time")
-            lat_lon = data.get("lat_lon")
-            speed = data.get("speed")
-            course = data.get("course")
+            # 2. 이미지 저장 경로 설정
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'reports')
+            os.makedirs(save_dir, exist_ok=True)
+            save_path = os.path.join(save_dir, filename)
 
-            
+            # 3. 카메라 캡처 (첫 번째 카메라 사용 기준)
+            cap = cv2.VideoCapture(0)
+            ret, frame = cap.read()
+            cap.release()
 
-            roadreport_time = datetime.strptime(kst_time, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+            if ret:
+                cv2.imwrite(save_path, frame)
+            else:
+                return Response({"error": "카메라 캡처 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # `roadreport_num`을 직접 할당하지 않고 자동 증가하는걸로 구현
-            new_report = RoadReport.objects.create(
+            # 4. 기타 데이터 수신
+            lat_lon = request.data.get("lat_lon", "")
+            speed = request.data.get("speed", None)
+            direction = request.data.get("course", None)
+
+            # 5. DB에 저장
+            RoadReport.objects.create(
+                roadreport_time=kst_time,
+                roadreport_image=os.path.join('reports', filename),  # 상대 경로 저장
                 roadreport_id=lat_lon,
-                roadreport_time=roadreport_time,
                 roadreport_speed=speed,
-                roadreport_direction=course
+                roadreport_direction=direction
             )
 
-            return Response({
-                "message": "하드웨어 데이터 저장 완료!",
-                "report_id": new_report.roadreport_id,
-                "num": new_report.roadreport_num
-            }, status=status.HTTP_201_CREATED)
+            return Response({"message": "저장 완료", "file": filename}, status=201)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": str(e)}, status=500)
 
 #AI 데이터 요청 API
 class AiPull(APIView):
