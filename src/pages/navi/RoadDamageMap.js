@@ -1,9 +1,8 @@
 // HomeMap.js
 import React, {useEffect, useRef, useState} from "react";
-import MarkerOption from "./MarkerOption";
-import Search from "./Search";
+import MarkerOption from "../../components/MarkerOption";
 
-const HomeMap = () => {
+const RoadDamageMap = () => {
     const naver = window.naver;
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
@@ -14,7 +13,7 @@ const HomeMap = () => {
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
             center: new naver.maps.LatLng(37.713955, 126.889456),
-            zoom: 13,
+            zoom: 10,
             minZoom: 7,
             zoomControl: true,
             zoomControlOptions: {
@@ -33,41 +32,36 @@ const HomeMap = () => {
 
         mapInstance.current = map;
 
-        // 위치 가져오기
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
-        }
+        // 마커
+        const markers = [
+            {lat: 37.3849483, lng: 127.1229117},
+            {lat: 37.643181, lng: 126.787966},
+            {lat: 37.653188, lng: 126.895579},
+            {lat: 37.658267, lng: 126.832025},
+            {lat: 37.618710, lng: 126.921693},
+            {lat: 37.71361, lng: 126.88947}
+        ];
 
-        function onSuccessGeolocation(position) {
-            const location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.setCenter(location);
-            map.setZoom(15);
-            console.log("Coordinates:", location.toString());
-
-            // 위치 마커
-            const locationMarker = MarkerOption({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                iconImg: "/media/icon_location.png"
+        markers.forEach(({lat, lng}) => {
+            const markerOptions = MarkerOption({
+                lat,
+                lng,
+                iconImg: "/media/icon_pothole.png"
             });
+
             new naver.maps.Marker({
-                ...locationMarker,
+                ...markerOptions,
                 map: map,
             });
-        }
-
-        function onErrorGeolocation() {
-            const center = map.getCenter();
-        }
+        });
 
     }, []);
 
     return (
         <>
             <div id="map" ref={mapRef} style={{width: "93.9%", height: "100%", marginBottom: "10px"}}/>
-            <Search></Search>
         </>
     );
 };
 
-export default HomeMap;
+export default RoadDamageMap;
