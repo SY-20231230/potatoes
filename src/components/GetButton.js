@@ -20,7 +20,7 @@ const GetButton = ({label, icon: Icon, endpoint, path, isLogout = false}) => {
         }
 
         try {
-            const response = await fetch(`http://192.168.150.236:8000/` + endpoint, {
+            const response = await fetch(`https://cbb9-59-6-232-66.ngrok-free.app/` + endpoint, {
                 method: "GET",
                 headers: {},
                 credentials: "include",
@@ -28,7 +28,7 @@ const GetButton = ({label, icon: Icon, endpoint, path, isLogout = false}) => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("응답 데이터:", data);
+                console.log("GetButton 데이터:", data);
                 navigate(path, {state: {fetchedData: data}});
             } else {
                 console.error("요청 실패:", response.statusText);

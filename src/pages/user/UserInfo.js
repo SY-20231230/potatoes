@@ -23,12 +23,6 @@ const UserInfo = () => {
                     <span className="user_name">{user_id}</span>
                     <span>님의 페이지</span>
                 </div>
-
-                <p>
-                    <GetButton
-                        label="즐겨찾기"
-                        endpoint="/user/like"/>
-                </p>
                 <p>
                     <GetButton
                         label="신고 내역"

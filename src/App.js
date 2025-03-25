@@ -11,8 +11,7 @@ import HomeMap from "./components/HomeMap";
 import SearchResult from "./pages/navi/SearchResult";
 
 import Directions from "./pages/navi/Directions";
-import Porthole from "./pages/navi/Porthole";
-import Place from "./pages/navi/PlaceSearch";
+import RoadDamageMap from "./pages/navi/RoadDamageMap";
 
 import UserInfo from "./pages/user/UserInfo";
 import UserLike from "./pages/user/UserLike";
@@ -25,6 +24,7 @@ import AdminManage from "./pages/admin/AdminManage";
 import NotFound from "./pages/NotFound";
 
 import Test from "./Test";
+import Test2 from "./Test2";
 
 function App() {
     const naverMapClientId = process.env.REACT_APP_NAVER_MAP_API_KEY;
@@ -49,8 +49,7 @@ function App() {
                         <Route path="search-result" element={<SearchResult/>}/>
 
                         <Route path="directions" element={<Directions/>}/>
-                        <Route path="porthole" element={<Porthole/>}/>
-                        <Route path="place" element={<Place/>}/>
+                        <Route path="damagemap" element={<RoadDamageMap/>}/>
 
                         {/* 사용자 */}
                         <Route path="user/info" element={<UserInfo/>}/>
@@ -67,6 +66,7 @@ function App() {
 
                         {/* 테스트 페이지 */}
                         <Route path="test" element={<Test/>}/>
+                        <Route path="test2" element={<Test2/>}/>
 
                     </Route>
                 </Routes>
