@@ -13,8 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import pymysql
 import os
+from dotenv import load_dotenv
 pymysql.install_as_MySQLdb()  # pymysql 사용 시 추가
-
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'jolupapp',
     'corsheaders',  # CORS 설정 추가
     'rest_framework',
+    
 ]
 
 
