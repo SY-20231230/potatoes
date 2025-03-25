@@ -3,6 +3,7 @@
 # Back - 윤성용
 * Django
 * Django REST API
+* MySQL
 # Hard - 한승준
 * Mainboard - Rasberry Pi 5 8GB
 * assi board - Arduino UNO

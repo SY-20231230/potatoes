@@ -125,8 +125,8 @@ class RoadReportAll(APIView):
 
 # 특정 도로 보고 조회 API
 # class RoadReportSelect(APIView):
-#   def get(self, request, roadreport_id):
-#      report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
+#   def get(self, request, roadreport_latlng):
+#      report = get_object_or_404(RoadReport, roadreport_latlng=roadreport_latlng)
 #     serializer = RoadReportSerializer(report)
 #
 #     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -142,8 +142,6 @@ class RoadReportSelect(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 도로 보고 삭제 API
-
-
 class RoadReportDelete(APIView):
     def delete(self, request, roadreport_num):
         report = get_object_or_404(RoadReport, roadreport_num=roadreport_num)
@@ -166,43 +164,55 @@ class RoadReportEdit(APIView):
 class HardwarePull(APIView):
     def post(self, request):
         try:
-
-            # 1. 네트워크 시간 기준으로 파일 이름 생성
+            # 1. 현재 시간 기준 파일 이름 설정
             kst = pytz.timezone('Asia/Seoul')
             kst_time = datetime.now(kst)
             filename = kst_time.strftime('%Y%m%d_%H%M%S') + '.jpg'
 
-            # 2. 이미지 저장 경로 설정
+            # 2. 저장 경로 설정
             save_dir = os.path.join(settings.MEDIA_ROOT, 'reports')
             os.makedirs(save_dir, exist_ok=True)
             save_path = os.path.join(save_dir, filename)
 
-            # 3. 카메라 캡처 (첫 번째 카메라 사용 기준)
-            cap = cv2.VideoCapture(0)
+            # 3. 카메라에서 프레임 한 장 캡처
+            cap = cv2.VideoCapture("http://192.168.0.135:8081/")
+            #cap = cv2.VideoCapture(0)
             ret, frame = cap.read()
             cap.release()
 
-            if ret:
-                cv2.imwrite(save_path, frame)
-            else:
+            if not ret:
                 return Response({"error": "카메라 캡처 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # 4. 기타 데이터 수신
+            # 4. 얼굴 인식
+            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+            if len(faces) == 0:
+                return Response({"message": "얼굴이 감지되지 않아 저장되지 않았습니다."}, status=status.HTTP_204_NO_CONTENT)
+
+            # 5. 바운딩 박스 그리기
+            for (x, y, w, h) in faces:
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            # 6. 얼굴이 감지된 이미지 저장
+            cv2.imwrite(save_path, frame)
+
+            # 7. 추가 정보 수신
             lat_lon = request.data.get("lat_lon", "")
             speed = request.data.get("speed", None)
             direction = request.data.get("course", None)
 
-
-            # 5. DB에 저장
+            # 8. DB 저장
             RoadReport.objects.create(
                 roadreport_time=kst_time,
-                roadreport_image=os.path.join('reports', filename),  # 상대 경로 저장
-                roadreport_id=lat_lon,
+                roadreport_image=os.path.join('reports', filename),
+                roadreport_latlng=lat_lon,  # ✅ 수정된 필드명
                 roadreport_speed=speed,
                 roadreport_direction=direction
             )
 
-            return Response({"message": "저장 완료", "file": filename}, status=201)
+            return Response({"message": "얼굴 인식됨, 이미지 저장 완료", "file": filename}, status=201)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
@@ -217,7 +227,7 @@ class AiPull(APIView):
 # 도로 보고 이미지 업로드 API
 class RoadReportImageUpload(APIView):
     def post(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+        report = get_object_or_404(RoadReport, roadreport_latlng=report_id)
         if 'roadreport_image' in request.FILES:
             report.roadreport_image = request.FILES['roadreport_image']
             report.save()
@@ -230,19 +240,19 @@ class RoadReportSelectWithCoords(APIView):
     def get(self, request, report_id):
         """ 도로 보고 데이터를 가져올 때 위도/경도를 분리하여 응답 """
         try:
-            report = get_object_or_404(RoadReport, roadreport_id=report_id)
+            report = get_object_or_404(RoadReport, roadreport_latlng=report_id)
 
-            # 예외 처리: roadreport_id가 None이거나 올바른 형식이 아닌 경우
-            if not report.roadreport_id or ',' not in report.roadreport_id:
+            # 예외 처리: roadreport_latlng가 None이거나 올바른 형식이 아닌 경우
+            if not report.roadreport_latlng or ',' not in report.roadreport_latlng:
                 return Response({'error': '잘못된 위치 데이터입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                latitude, longitude = map(float, report.roadreport_id.split(','))  # 실수형 변환
+                latitude, longitude = map(float, report.roadreport_latlng.split(','))  # 실수형 변환
             except ValueError:
                 return Response({'error': '위도/경도 값이 올바르지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({
-                'roadreport_id': report.roadreport_id,
+                'roadreport_latlng': report.roadreport_latlng,
                 'latitude': latitude,
                 'longitude': longitude,
                 'roadreport_damagetype': report.roadreport_damagetype,
@@ -298,22 +308,33 @@ def object_detection_stream(request):
 # naver 지도 관련련
 class NaverMapProxy(APIView):
     def get(self, request):
-        lat = request.query_params.get('lat')
-        lon = request.query_params.get('lon')
+        # 1. 쿼리 파라미터에서 start, goal 가져오기
+        start = request.query_params.get('start')  # 예: "126.97843,37.56668"
+        goal = request.query_params.get('goal')    # 예: "127.10523,37.35953"
 
-        # 네이버 지도 API 엔드포인트
-        url = f"https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?lat={lat}&lon={lon}"
+        if not start or not goal:
+            return Response({'error': 'start와 goal 파라미터가 필요합니다.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 2. Directions API URL 구성
+        url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving"
 
         headers = {
             'X-NCP-APIGW-API-KEY-ID': os.environ.get('NAVER_API_KEY_ID'),
             'X-NCP-APIGW-API-KEY': os.environ.get('NAVER_API_KEY'),
         }
 
-        # 네이버 지도 API 호출
-        naver_response = requests.get(url, headers=headers)
+        params = {
+            'start': start,
+            'goal': goal,
+            'option': 'trafast'  # 가장 빠른 길
+        }
 
-        # 응답을 프론트엔드로 그대로 전달
-        return Response(naver_response.json(), status=naver_response.status_code)
+        # 3. 네이버 Directions API 호출
+        try:
+            naver_response = requests.get(url, headers=headers, params=params)
+            return Response(naver_response.json(), status=naver_response.status_code)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
 
 
 class RoadReportCreate(APIView):
@@ -322,7 +343,7 @@ class RoadReportCreate(APIView):
         report = RoadReport.objects.create(
             roadreport_time=data['roadreport_time'],
             roadreport_image=data['roadreport_image'],
-            roadreport_id=data['roadreport_id'],
+            roadreport_latlng=data['roadreport_latlng'],
             roadreport_speed=data['roadreport_speed'],
             roadreport_direction=data['roadreport_direction'],
         )
