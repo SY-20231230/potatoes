@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     MasterSignUp, MasterLogin, UserSignUp, UserLogin, UserSignOut, UserInfo,RoadReportSelectWithCoords,
     RoadReportAll, RoadReportSelect, HardwarePull, AiPull, RoadReportDelete, RoadReportEdit, UsersViewSet, MasterViewSet, UserHistoryViewSet, RoadReportViewSet,
-    NaverMapProxy,RoadReportCreate
+    NaverMapProxy,RoadReportCreate,NaverLocalSearch
 )
 from . import views
 # Router 설정
@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),
     #naver 지도 api
     path('naver/proxy/', NaverMapProxy.as_view(), name='naver_map_proxy'),
+    path('naver/search/', NaverLocalSearch.as_view(), name='naver-local-search'),
     #path('driving/', NaverMapProxy.as_view(),name='naver_map_proxy')
     # 도로 보고 이미지 업로드 API
     path("roadreport/create", RoadReportCreate.as_view()),

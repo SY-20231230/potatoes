@@ -176,7 +176,6 @@ class HardwarePull(APIView):
 
             # 3. 카메라에서 프레임 한 장 캡처
             cap = cv2.VideoCapture("http://192.168.0.135:8081/")
-            #cap = cv2.VideoCapture(0)
             ret, frame = cap.read()
             cap.release()
 
@@ -188,34 +187,41 @@ class HardwarePull(APIView):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
-            if len(faces) == 0:
-                return Response({"message": "얼굴이 감지되지 않아 저장되지 않았습니다."}, status=status.HTTP_204_NO_CONTENT)
+            # 5. 얼굴 인식 결과에 따라 이미지 저장 여부 결정
+            if len(faces) > 0:
+                # 바운딩 박스 그리기
+                for (x, y, w, h) in faces:
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            # 5. 바운딩 박스 그리기
-            for (x, y, w, h) in faces:
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                # 이미지 저장
+                cv2.imwrite(save_path, frame)
+                image_path = os.path.join('reports', filename)
+            else:
+                image_path = None  # 얼굴 없으면 이미지 없음
 
-            # 6. 얼굴이 감지된 이미지 저장
-            cv2.imwrite(save_path, frame)
-
-            # 7. 추가 정보 수신
+            # 6. 추가 정보 수신
             lat_lon = request.data.get("lat_lon", "")
             speed = request.data.get("speed", None)
             direction = request.data.get("course", None)
 
-            # 8. DB 저장
+            # 7. DB 저장 (얼굴 인식 여부와 무관하게 저장)
             RoadReport.objects.create(
                 roadreport_time=kst_time,
-                roadreport_image=os.path.join('reports', filename),
-                roadreport_latlng=lat_lon,  # ✅ 수정된 필드명
+                roadreport_image=image_path,
+                roadreport_latlng=lat_lon,
                 roadreport_speed=speed,
                 roadreport_direction=direction
             )
 
-            return Response({"message": "얼굴 인식됨, 이미지 저장 완료", "file": filename}, status=201)
+            # 8. 응답 반환
+            if image_path:
+                return Response({"message": "얼굴 인식됨, 이미지 저장 완료", "file": filename}, status=201)
+            else:
+                return Response({"message": "얼굴 인식되지 않았지만 정보는 저장되었습니다."}, status=200)
 
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
 
 
 # AI 데이터 요청 API
@@ -348,3 +354,28 @@ class RoadReportCreate(APIView):
             roadreport_direction=data['roadreport_direction'],
         )
         return Response({"message": "성공"}, status=201)
+
+
+class NaverLocalSearch(APIView):
+    def get(self, request):
+        query = request.query_params.get('query')
+        if not query:
+            return Response({'error': '검색어(query)는 필수입니다.'}, status=400)
+
+        url = "https://openapi.naver.com/v1/search/local.json"
+        headers = {
+            "X-Naver-Client-Id": os.environ.get("NAVER_API_KEY_ID"),
+            "X-Naver-Client-Secret": os.environ.get("NAVER_API_KEY_SECRET"),
+        }
+        params = {
+            "query": query,
+            "display": 5,
+            "start": 1,
+            "sort": "random"
+        }
+
+        try:
+            r = requests.get(url, headers=headers, params=params)
+            return Response(r.json(), status=r.status_code)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
