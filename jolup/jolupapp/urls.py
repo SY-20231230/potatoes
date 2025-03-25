@@ -32,8 +32,9 @@ urlpatterns = [
     path('roadreport/all', RoadReportAll.as_view(), name='roadreport-all'),
     path('roadreport/select/<str:roadreport_num>/', RoadReportSelect.as_view(), name='roadreport-select'),
     #path('roadreport/select', RoadReportSelect.as_view(), name='roadreport-select'),
-    path('roadreport/delete', RoadReportDelete.as_view(), name='roadreport-delete'),
-    path('roadreport/edit', RoadReportEdit.as_view(), name='roadreport-edit'),
+    path('roadreport/delete/<int:roadreport_num>/', RoadReportDelete.as_view(), name='roadreport-delete'),
+    #path('roadreport/edit', RoadReportEdit.as_view(), name='roadreport-edit'),
+    path('roadreport/edit/<int:roadreport_num>/', RoadReportEdit.as_view(), name='roadreport_edit'),
 
     # 하드웨어 정보 및 AI 관련 API
     path('hardware/pull/', HardwarePull.as_view(), name='hardware-pull'),
@@ -42,6 +43,7 @@ urlpatterns = [
     path('api/roadreport/select_with_coords/<str:report_id>/', RoadReportSelectWithCoords.as_view(), name='roadreport-select-with-coords'),
     #naver 지도 api
     path('naver/proxy/', NaverMapProxy.as_view(), name='naver_map_proxy'),
+    #path('driving/', NaverMapProxy.as_view(),name='naver_map_proxy')
     # 도로 보고 이미지 업로드 API
     path("roadreport/create", RoadReportCreate.as_view()),
 ]
