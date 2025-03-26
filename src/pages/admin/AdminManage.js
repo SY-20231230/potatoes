@@ -126,10 +126,10 @@ const AdminManage = () => {
                             <td className="id">위도: {road.lat}, <br/>경도: {road.lng}</td>
                             <td className="image">
                                 <img
-                                    src={`http://192.168.0.37:8000/${road.roadreport_image}`}
+                                    src={`http://192.168.0.157:8000/${road.roadreport_image}`}
                                     alt={`img${startIndex + index}`}
                                     className="clickable-image"
-                                    onClick={() => openModal(`http://192.168.0.37:8000/${road.roadreport_image}`)}
+                                    onClick={() => openModal(`http://192.168.0.157:8000/${road.roadreport_image}`)}
                                 />
                             </td>
                             <td className="damage_type">{road.roadreport_damagetype}</td>

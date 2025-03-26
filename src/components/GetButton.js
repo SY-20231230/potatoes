@@ -20,7 +20,7 @@ const GetButton = ({label, icon: Icon, endpoint, path, isLogout = false}) => {
         }
 
         try {
-            const response = await fetch(`http://192.168.0.37:8000/` + endpoint, {
+            const response = await fetch(`http://192.168.0.157:8000/` + endpoint, {
                 method: "GET",
             });
 
