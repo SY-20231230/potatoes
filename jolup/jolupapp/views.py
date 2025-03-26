@@ -17,7 +17,14 @@ import pytz
 from datetime import datetime
 import requests
 from django.conf import settings
-
+import torch
+import numpy as np
+from pathlib import Path
+from ultralytics import YOLO
+from functools import lru_cache
+import pathlib
+temp = pathlib.PosixPath #이 세줄이 욜로 리눅스 문제일때때
+pathlib.PosixPath = pathlib.WindowsPath
 
 
 def index(request):  # 임시 메인페이지 출력문
@@ -159,52 +166,69 @@ class RoadReportEdit(APIView):
             return Response({'message': '도로 보고 수정 완료'}, status=status.HTTP_200_OK)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+def load_yolo_model():
+    print("[INFO] YOLO 모델 로드 중 (force reload)")
+    return torch.hub.load(
+        'ultralytics/yolov5',
+        'custom',
+        path="C:/Users/ysyhs/Desktop/jolup/models/DoroSeeV1.pt",
+    )
 
-# 하드웨어 데이터 요청 API
 class HardwarePull(APIView):
+
     def post(self, request):
         try:
-            # 1. 현재 시간 기준 파일 이름 설정
+            print("[INFO] 요청 수신됨. 모델 로드 시작.")
+            model = load_yolo_model()
+            print("[INFO] 모델 로딩 완료.")
+
+            # 현재 시간 기준 파일 이름
             kst = pytz.timezone('Asia/Seoul')
             kst_time = datetime.now(kst)
             filename = kst_time.strftime('%Y%m%d_%H%M%S') + '.jpg'
 
-            # 2. 저장 경로 설정
+            # 저장 경로
             save_dir = os.path.join(settings.MEDIA_ROOT, 'reports')
             os.makedirs(save_dir, exist_ok=True)
             save_path = os.path.join(save_dir, filename)
 
-            # 3. 카메라에서 프레임 한 장 캡처
+            # 영상 프레임 한 장 캡처
             cap = cv2.VideoCapture("http://192.168.0.135:8081/")
+            print(f"[DEBUG] VideoCapture opened: {cap.isOpened()}")
             ret, frame = cap.read()
             cap.release()
 
-            if not ret:
+            if not ret or frame is None:
+                print("[ERROR] 카메라에서 프레임을 받아오지 못했습니다.")
                 return Response({"error": "카메라 캡처 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-            # 4. 얼굴 인식
-            face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+            print(f"[INFO] 프레임 캡처 완료. 프레임 shape: {frame.shape}")
 
-            # 5. 얼굴 인식 결과에 따라 이미지 저장 여부 결정
-            if len(faces) > 0:
-                # 바운딩 박스 그리기
-                for (x, y, w, h) in faces:
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # 객체 감지 실행
+            results = model(frame)
+            detections = results.xyxy[0].tolist()
+            print(f"[INFO] 감지된 객체 수: {len(detections)}")
 
-                # 이미지 저장
+            # 결과 필터링 및 바운딩 박스
+            image_path = None
+            for *xyxy, conf, cls in detections:
+                if conf < 0.3:
+                    continue
+                x1, y1, x2, y2 = map(int, xyxy)
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                image_path = os.path.join('reports', filename)  # 하나라도 감지되면 저장 경로 설정
+
+            # 이미지 저장 (감지된 객체가 있을 경우에만)
+            if image_path:
                 cv2.imwrite(save_path, frame)
-                image_path = os.path.join('reports', filename)
-            else:
-                image_path = None  # 얼굴 없으면 이미지 없음
+                print(f"[INFO] 이미지 저장됨: {save_path}")
 
-            # 6. 추가 정보 수신
+            # 추가 정보 저장
             lat_lon = request.data.get("lat_lon", "")
             speed = request.data.get("speed", None)
             direction = request.data.get("course", None)
 
-            # 7. DB 저장 (얼굴 인식 여부와 무관하게 저장)
+            # DB 저장
             RoadReport.objects.create(
                 roadreport_time=kst_time,
                 roadreport_image=image_path,
@@ -212,17 +236,44 @@ class HardwarePull(APIView):
                 roadreport_speed=speed,
                 roadreport_direction=direction
             )
+            print("[INFO] DB 저장 완료.")
 
-            # 8. 응답 반환
             if image_path:
-                return Response({"message": "얼굴 인식됨, 이미지 저장 완료", "file": filename}, status=201)
+                return Response({"message": "감지됨, 이미지 저장 완료", "file": filename}, status=status.HTTP_201_CREATED)
             else:
-                return Response({"message": "얼굴 인식되지 않았지만 정보는 저장되었습니다."}, status=200)
+                return Response({"message": "감지 안됨, 정보만 저장됨"}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=500)
+            print(f"[ERROR] 예외 발생: {str(e)}")
+            return Response({"error": f"오류 발생: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+def object_detection_stream(request):
+    stream_url = "http://192.168.0.135:8081/"
 
+    model = load_yolo_model()
 
+    def generate_frames():
+        cap = cv2.VideoCapture(stream_url)
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            results = model(frame)
+            detections = results.xyxy[0].tolist()
+
+            # 바운딩 박스 그리기
+            for *xyxy, conf, cls in detections:
+                x1, y1, x2, y2 = map(int, xyxy)
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+            _, jpeg = cv2.imencode('.jpg', frame)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
+
+        cap.release()
+
+    return StreamingHttpResponse(generate_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 # AI 데이터 요청 API
 class AiPull(APIView):
@@ -269,46 +320,6 @@ class RoadReportSelectWithCoords(APIView):
 
         except RoadReport.DoesNotExist:
             return Response({'error': '도로 보고 데이터가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
-
-
-def object_detection_stream(request):
-    stream_url = "http://192.168.0.135:8081/"  # 실제 Motion 스트리밍 URL로 변경
-
-    def video_frame_generator():
-        video_capture = cv2.VideoCapture(stream_url)
-        if not video_capture.isOpened():
-            raise Exception("스트리밍 URL에 연결할 수 없습니다.")
-
-        # 객체 인식 모델 로드 (Haar Cascade 또는 DNN)
-        # 예시: Haar Cascade 얼굴 인식 모델 로드
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-        try:
-            while True:
-                ret, frame = video_capture.read()
-                if not ret:
-                    break  # 스트림 종료 또는 오류 발생
-
-                # 객체 인식 수행 -> 이 부분은 나중에 얼굴인식이 아닌 우리껄로 수정해야 하는 부분
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                faces = face_cascade.detectMultiScale(gray, 1.1, 4)  # 얼굴 검출
-
-                # 검출된 객체에 사각형 그리기 (예시: 얼굴)
-                for (x, y, w, h) in faces:
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # 초록색 사각형
-
-                # 객체 인식 결과 프레임 (MJPEG 형식으로 인코딩)
-                _, jpeg_frame = cv2.imencode('.jpg', frame)
-                byte_frame = jpeg_frame.tobytes()
-
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + byte_frame + b'\r\n')
-                time.sleep(0.1)  # 프레임 처리 속도 조절 (선택 사항)
-
-        finally:
-            video_capture.release()  # VideoCapture 객체 해제
-
-    return StreamingHttpResponse(video_frame_generator(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 # naver 지도 관련련
@@ -365,7 +376,7 @@ class NaverLocalSearch(APIView):
         url = "https://openapi.naver.com/v1/search/local.json"
         headers = {
             "X-Naver-Client-Id": os.environ.get("NAVER_API_KEY_ID"),
-            "X-Naver-Client-Secret": os.environ.get("NAVER_API_KEY_SECRET"),
+            "X-Naver-Client-Secret": os.environ.get("NAVER_API_KEY"),
         }
         params = {
             "query": query,
@@ -373,6 +384,7 @@ class NaverLocalSearch(APIView):
             "start": 1,
             "sort": "random"
         }
+        
 
         try:
             r = requests.get(url, headers=headers, params=params)
