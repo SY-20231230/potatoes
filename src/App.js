@@ -46,7 +46,7 @@ function App() {
                         <Route path="users/signup" element={<Signup/>}/>
 
                         {/* 내비게이션 */}
-                        <Route path="search-result" element={<SearchResult/>}/>
+                        <Route path="search/result" element={<SearchResult/>}/>
 
                         <Route path="directions" element={<Directions/>}/>
                         <Route path="damagemap" element={<RoadDamageMap/>}/>
@@ -74,8 +74,7 @@ function App() {
         </NavermapsProvider>
 
 
-    )
-        ;
+    );
 }
 
 export default App;

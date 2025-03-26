@@ -29,9 +29,9 @@ const Sidebar = () => {
     // 공통 메뉴
     const commonMenu = (
         <div className="menu">
-            <GetButton label="길찾기" icon={FaDirections} path={`/directions`} endpoint={``}/>
-            <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`} endpoint={``}/>
-            <GetButton label="테스트1" path={`/test`}/>
+            <GetButton label="길찾기" icon={FaDirections} path={`/directions`}/>
+            <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`}/>
+            <GetButton label="내비 구현" path={`/test`}/>
             <GetButton label="테스트2" path={`/test2`} endpoint={`roadreport/all`}/>
         </div>
     );
