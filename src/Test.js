@@ -1,11 +1,14 @@
-// HomeMap.js
 import React, {useEffect, useRef, useState} from "react";
-import GetButton from "./components/GetButton";
+import SearchAddresBar from "./components/SearchAddresBar";
+import NaverAPIButton from "./components/NaverAPIButton";
 
 const Test = () => {
     const naver = window.naver;
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
+
+    const start = "126.889456%2C37.713955"
+    const goal = "127.1229117%2C37.3849483"
 
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
@@ -51,10 +54,10 @@ const Test = () => {
     return (
         <>
             <div id="map" ref={mapRef} style={{width: "90%", height: "600px", marginBottom: "10px"}}/>
-            <GetButton label="출발지 네이버"
-                       endpoint={`start=127.12345,37.12345`}></GetButton>
-            <GetButton label="테스트 버튼"
-                           endpoint={`naver/proxy/goal=129.075986%2C35.179470&start=127.1058342%2C37.359708`}></GetButton>
+            <SearchAddresBar/>
+            <h1>Test1 내비 구현</h1>
+            <div>api 요청과 받기는 됨. 이제 길찾기 바 설정하고 다음 내비 안내 페이지 만들어야 함;;</div>
+            <NaverAPIButton label="api 요청" start={start} goal={goal} path={`/directions`}/>
         </>
     );
 };

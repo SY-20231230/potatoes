@@ -31,8 +31,9 @@ const AdminManage = () => {
     const pagesPerGroup = 10;
     const [currentPage, setPage] = useState(1);
 
-    const totalPages = Math.ceil(road_manage.length / perPage);
+    const filteredData = road_manage.filter((road) => road.roadreport_image);
 
+    const totalPages = Math.ceil(filteredData.length / perPage);
     const totalGroups = Math.ceil(totalPages / pagesPerGroup);
     const currentGroup = Math.ceil(currentPage / pagesPerGroup);
 
@@ -40,7 +41,7 @@ const AdminManage = () => {
     const groupEndPage = Math.min(currentGroup * pagesPerGroup, totalPages);
     const startIndex = (currentPage - 1) * perPage;
 
-    const currentData = road_manage.slice(startIndex, startIndex + perPage);
+    const currentData = filteredData.slice(startIndex, startIndex + perPage);
 
     const changePage = (page) => {
         setPage(page);
@@ -117,33 +118,35 @@ const AdminManage = () => {
                 </tr>
                 </thead>
                 <tbody className="table_body">
-                {currentData.map((road, index) => (
-                    <tr key={index}>
-                        <td className="num">{road.roadreport_num}</td>
-                        <td className="id">위도: {road.lat}, 경도: {road.lng}</td>
-                        <td className="image">
-                            <img
-                                src={`https://cbb9-59-6-232-66.ngrok-free.app/` + road.roadreport_image}
-                                alt={`img${startIndex + index}`}
-                                className="clickable-image"
-                                onClick={() => openModal(`https://cbb9-59-6-232-66.ngrok-free.app/` + road.roadreport_image)}
-                            />
-                        </td>
-                        <td className="damage_type">{road.roadreport_damagetype}</td>
-                        <td className="status">
-                            <Dropdown
-                                options={options}
-                                value={road.roadreport_status || '접수됨'}
-                                onChange={(status) => changeStatus(status, road.roadreport_num)}
-                            />
-                        </td>
-                        <td className="time">{road.ymd + " " + road.hms}</td>
-                        <td className="edit">
-                            <button>위치</button>
-                            <button>삭제</button>
-                        </td>
-                    </tr>
-                ))}
+                {currentData
+                    .filter((road) => road.roadreport_image)
+                    .map((road, index) => (
+                        <tr key={index}>
+                            <td className="num">{road.roadreport_num}</td>
+                            <td className="id">위도: {road.lat}, <br/>경도: {road.lng}</td>
+                            <td className="image">
+                                <img
+                                    src={`http://192.168.0.37:8000/${road.roadreport_image}`}
+                                    alt={`img${startIndex + index}`}
+                                    className="clickable-image"
+                                    onClick={() => openModal(`http://192.168.0.37:8000/${road.roadreport_image}`)}
+                                />
+                            </td>
+                            <td className="damage_type">{road.roadreport_damagetype}</td>
+                            <td className="status">
+                                <Dropdown
+                                    options={options}
+                                    value={road.roadreport_status}
+                                    onChange={(status) => changeStatus(status, road.roadreport_num)}
+                                />
+                            </td>
+                            <td className="time">{road.ymd + " " + road.hms}</td>
+                            <td className="edit">
+                                <button>위치</button>
+                                <button>삭제</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
 

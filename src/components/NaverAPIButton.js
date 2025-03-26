@@ -1,48 +1,44 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import "./GetButton.css";
+import './NaverAPIBotton.css';
 
-const GetButton = ({label, icon: Icon, endpoint, path, isLogout = false}) => {
+const NaverAPIButton = ({label, path, start, goal}) => {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        sessionStorage.clear();
-        navigate("/");
-        window.location.reload();
-    };
+    start = "126.888709%2C37.710999"
+    goal = "126.898874%2C37.705951"
+
 
     const handleClick = async (event) => {
         event.preventDefault();
 
-        if (isLogout) {
-            handleLogout();
-            return;
-        }
-
         try {
-            const response = await fetch(`http://192.168.0.37:8000/` + endpoint, {
+            const response = await fetch(`http://192.168.0.37:8000/naver/proxy/?start=${start}&goal=${goal}`, {
                 method: "GET",
             });
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("GetButton 데이터:", data);
-                navigate(path, {state: {fetchedData: data}});
+                console.log("NaverGetButton 데이터:", data);
+                console.log("start, goal:", start, goal);
+                navigate(path);
             } else {
                 console.error("요청 실패:", response.statusText);
+                console.log("start, goal:", start, goal);
                 navigate(path);
             }
         } catch (error) {
             console.error("요청 중 오류 발생:", error);
+            console.log("start, goal:", start, goal);
             navigate(path);
         }
     };
 
     return (
         <button className="comp_button" onClick={handleClick}>
-            <span>{label}</span> {Icon && <Icon/>}
+            <span>{label}</span>
         </button>
     );
 };
 
-export default GetButton;
+export default NaverAPIButton;

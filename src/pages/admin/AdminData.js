@@ -1,19 +1,19 @@
 import React, {useEffect, useRef, useState, useMemo} from "react";
 import {useLocation} from "react-router-dom";
-
 import './AdminData.css';
 import CountEvent from "../../components/CountEvent";
 import MarkerOption from "../../components/MarkerOption";
 
 const AdminData = () => {
-
     const location = useLocation();
     const road_data = location.state?.fetchedData || [];
+
+    // 이미지 있는 데이터만 필터링
+    const filteredData = road_data.filter(road => road.roadreport_image);
 
     const naver = window.naver;
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
-
 
     // 시간 형식 맞추기
     const road_date = new Date();
@@ -25,16 +25,15 @@ const AdminData = () => {
 
     const agoMonth = new Date(road_date);
     agoMonth.setDate(road_date.getDate() - 30);
-    const roadMonth = `${road_date.getFullYear()}-${(road_date.getMonth() + 1).toString().padStart(2, "0")}-${agoMonth.getDate().toString().padStart(2, "0")}`;
+    const roadMonth = `${road_date.getFullYear()}-${(agoMonth.getMonth() + 1).toString().padStart(2, "0")}-${agoMonth.getDate().toString().padStart(2, "0")}`;
 
     console.log("현재 연월일: ", now_ymd);
 
-    road_data.forEach((road) => {
+    filteredData.forEach((road) => {
         if (road.roadreport_time) {
             const [ymd, hms] = road.roadreport_time.split("T");
             road.ymd = ymd;
             road.hms = hms;
-
         } else {
             console.log(`num ${road.roadreport_num} time 없음`);
         }
@@ -111,7 +110,7 @@ const AdminData = () => {
             });
         });
 
-    }, [road_data]);
+    }, [filteredData]);
 
     return (
         <div className="admin_data">
@@ -122,17 +121,17 @@ const AdminData = () => {
                     <span>도로파손 발생 통계</span>
                     <br/><br/>
                     <div className="event_container">
-                        <CountEvent name={"전체"} count={road_data.length}/>
+                        <CountEvent name={"전체"} count={filteredData.length}/>
                         <CountEvent name={"접수됨"}
-                                    count={road_data.filter(road => ["접수됨", null].includes(road.roadreport_status)).length}/>
+                                    count={filteredData.filter(road => ["접수됨", null].includes(road.roadreport_status)).length}/>
                         <CountEvent name={"처리중"}
-                                    count={road_data.filter(road => road.roadreport_status === "처리중").length}/>
+                                    count={filteredData.filter(road => road.roadreport_status === "처리중").length}/>
                         <CountEvent name={"해결됨"}
-                                    count={road_data.filter(road => road.roadreport_status === "해결됨").length}/>
+                                    count={filteredData.filter(road => road.roadreport_status === "해결됨").length}/>
                         <CountEvent name={"보류중"}
-                                    count={road_data.filter(road => road.roadreport_status === "보류중").length}/>
+                                    count={filteredData.filter(road => road.roadreport_status === "보류중").length}/>
                         <CountEvent name={"미분류"}
-                                    count={road_data.filter(road => !["접수됨", "처리중", "해결됨", "보류중", null].includes(road.roadreport_status)).length}/>
+                                    count={filteredData.filter(road => !["접수됨", "처리중", "해결됨", "보류중", null].includes(road.roadreport_status)).length}/>
                     </div>
                 </div>
 
@@ -141,11 +140,13 @@ const AdminData = () => {
                 <div className="event">
                     <h3>시간별 발생 건수</h3>
                     <div className="event_container">
-                        <CountEvent name={"금일"} count={road_data.filter(road => road.ymd === now_ymd).length}/>
+                        <CountEvent name={"금일"} count={filteredData.filter(road => road.ymd === now_ymd).length}/>
                         <CountEvent name={"주간"}
-                                    count={road_data.filter(road => road.ymd > roadWeek && road.ymd < now_ymd).length}/>
+                                    count={filteredData.filter(road => road.ymd >= roadWeek && road.ymd < now_ymd).length}/>
                         <CountEvent name={"월간"}
-                                    count={road_data.filter(road => road.ymd > roadMonth && road.ymd < now_ymd).length}/>
+                                    count={filteredData.filter(road => road.ymd >= roadMonth && road.ymd < roadWeek).length}/>
+                        <CountEvent name={"이전"}
+                                    count={filteredData.filter(road => road.ymd < roadMonth).length}/>
                     </div>
                 </div>
 
@@ -153,11 +154,11 @@ const AdminData = () => {
                     <h3>유형별 발생 건수</h3>
                     <div className="event_container">
                         <CountEvent name={"포트홀"}
-                                    count={road_data.filter(road => road.roadreport_damagetype === "pothole").length}/>
+                                    count={filteredData.filter(road => road.roadreport_damagetype === "pothole").length}/>
                         <CountEvent name={"크랙"}
-                                    count={road_data.filter(road => road.roadreport_damagetype === "crack").length}/>
+                                    count={filteredData.filter(road => road.roadreport_damagetype === "crack").length}/>
                         <CountEvent name={"기타"}
-                                    count={road_data.filter(road => !["pothole", "crack"].includes(road.roadreport_damagetype)).length}/>
+                                    count={filteredData.filter(road => !["pothole", "crack"].includes(road.roadreport_damagetype)).length}/>
                     </div>
                 </div>
             </div>
