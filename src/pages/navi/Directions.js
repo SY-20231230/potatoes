@@ -1,62 +1,50 @@
 import React, {useEffect, useRef, useState} from "react";
+import {useLocation} from "react-router-dom";
 import NaverAPIButton from "../../components/NaverAPIButton";
 import SearchAddresBar from "../../components/SearchAddresBar";
-import {Button} from "@mui/material";
 
 const Directions = () => {
     const naver = window.naver;
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
 
-    const start = "126.889456%2C37.713955"
-    const goal = "127.1229117%2C37.3849483"
+    const location = useLocation();
+    const [map, setMap] = useState(null);
+    const road_navi = location.state?.fetchedData?.route?.trafast?.[0]?.path || [];
+
+    const start = "126.889456%2C37.71389";
+    const goal = "126.810370%2C37.632313";
 
     useEffect(() => {
-        const map = new naver.maps.Map(mapRef.current, {
-            center: new naver.maps.LatLng(37.713955, 126.889456),
-            zoom: 13,
-            minZoom: 7,
-            zoomControl: true,
-            zoomControlOptions: {
-                position: naver.maps.Position.TOP_RIGHT,
-            },
+        if (!naver || !document.getElementById("map")) return;
+
+        const mapInstance = new naver.maps.Map("map", {
+            center: new naver.maps.LatLng(road_navi[0]?.[1] || 37.713955, road_navi[0]?.[0] || 126.889456),
+            zoom: 14,
         });
 
-        map.setOptions("mapTypeControl", true);
-        naver.maps.Event.addListener(map, "zoom_changed", (zoom) => {
-            console.log("zoom:", zoom);
+        setMap(mapInstance);
+    }, [naver]);
+
+    useEffect(() => {
+        if (!map || road_navi.length === 0) return;
+
+        const pathData = road_navi.map(coord => new naver.maps.LatLng(coord[1], coord[0]));
+
+        new naver.maps.Polyline({
+            map,
+            path: pathData,
+            strokeColor: "#E81E24",
+            strokeWeight: 4,
         });
-
-        naver.maps.Event.once(map, "init", () => {
-            console.log("지도 초기화 완료");
-        });
-
-        mapInstance.current = map;
-
-        // 위치 가져오기
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
-        }
-
-        function onSuccessGeolocation(position) {
-            const location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.setCenter(location);
-            map.setZoom(10);
-            console.log("Coordinates:", location.toString());
-        }
-
-        function onErrorGeolocation() {
-            const center = map.getCenter();
-        }
-
-
-    }, []);
+    }, [map, road_navi]);
 
     return (
-        <>
+        <div>
             <div id="map" ref={mapRef} style={{width: "90%", height: "600px", marginBottom: "10px"}}/>
+            <NaverAPIButton label="중부대 -> 대곡역" start={start} goal={goal}/>
             <SearchAddresBar/>
-        </>
+        </div>
     );
 };
 
