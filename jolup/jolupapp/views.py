@@ -22,8 +22,8 @@ import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
 from functools import lru_cache
-import pathlib
-temp = pathlib.PosixPath #이 세줄이 욜로 리눅스 문제일때때
+import pathlib #이 세줄이 욜로 리눅스 문제일때때
+temp = pathlib.PosixPath 
 pathlib.PosixPath = pathlib.WindowsPath
 
 
@@ -207,16 +207,25 @@ class HardwarePull(APIView):
             # 객체 감지 실행
             results = model(frame)
             detections = results.xyxy[0].tolist()
+            names = model.names  # 클래스 ID → 이름 매핑 딕셔너리
+
             print(f"[INFO] 감지된 객체 수: {len(detections)}")
 
             # 결과 필터링 및 바운딩 박스
             image_path = None
+            detected_types = set()
             for *xyxy, conf, cls in detections:
                 if conf < 0.3:
                     continue
+                class_name = names[int(cls)].lower()
+                if class_name in ["crack", "pothole"]:
+                    detected_types.add(class_name)
+
                 x1, y1, x2, y2 = map(int, xyxy)
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                image_path = os.path.join('reports', filename)  # 하나라도 감지되면 저장 경로 설정
+                cv2.putText(frame, class_name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                image_path = os.path.join('reports', filename)
+            detected_type_str = ",".join(sorted(detected_types)) if detected_types else None
 
             # 이미지 저장 (감지된 객체가 있을 경우에만)
             if image_path:
@@ -234,7 +243,8 @@ class HardwarePull(APIView):
                 roadreport_image=image_path,
                 roadreport_latlng=lat_lon,
                 roadreport_speed=speed,
-                roadreport_direction=direction
+                roadreport_direction=direction,
+                roadreport_damagetype=detected_type_str
             )
             print("[INFO] DB 저장 완료.")
 
@@ -250,24 +260,45 @@ class HardwarePull(APIView):
 def object_detection_stream(request):
     stream_url = "http://192.168.0.135:8081/"
 
+    print("[INFO] YOLO 모델 로드 중 (force reload)")
     model = load_yolo_model()
+    names = model.names  # 클래스 ID → 이름
 
     def generate_frames():
         cap = cv2.VideoCapture(stream_url)
+
+        if not cap.isOpened():
+            print("[ERROR] 스트림 열기 실패")
+            return
+
         while True:
             ret, frame = cap.read()
-            if not ret:
-                break
+            if not ret or frame is None:
+                print("[WARN] 프레임 없음, 재시도 대기")
+                time.sleep(0.5)
+                continue
 
             results = model(frame)
             detections = results.xyxy[0].tolist()
 
-            # 바운딩 박스 그리기
-            for *xyxy, conf, cls in detections:
-                x1, y1, x2, y2 = map(int, xyxy)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            if detections:
+                for *xyxy, conf, cls in detections:
+                    if len(xyxy) != 4:
+                        continue
+                    x1, y1, x2, y2 = map(int, xyxy)
+                    class_name = names[int(cls)].lower()
+                    label = f"{class_name} {conf:.2f}"
+
+                    # 바운딩 박스
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    # 클래스명 텍스트
+                    cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                                0.6, (0, 255, 0), 2)
 
             _, jpeg = cv2.imencode('.jpg', frame)
+            if jpeg is None:
+                continue
+
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
 
@@ -375,8 +406,8 @@ class NaverLocalSearch(APIView):
 
         url = "https://openapi.naver.com/v1/search/local.json"
         headers = {
-            "X-Naver-Client-Id": os.environ.get("NAVER_API_KEY_ID"),
-            "X-Naver-Client-Secret": os.environ.get("NAVER_API_KEY"),
+            "X-Naver-Client-Id": os.environ.get("NAVER_CLIENT_ID"),
+            "X-Naver-Client-Secret": os.environ.get("NAVER_CLIENT_SECRET"),
         }
         params = {
             "query": query,
@@ -391,3 +422,5 @@ class NaverLocalSearch(APIView):
             return Response(r.json(), status=r.status_code)
         except Exception as e:
             return Response({"error": str(e)}, status=500)
+
+
