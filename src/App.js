@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 
 import Test from "./Test";
 import Test2 from "./Test2";
+import Test3 from "./Test3";
 
 function App() {
     const naverMapClientId = process.env.REACT_APP_NAVER_MAP_API_KEY;
@@ -67,6 +68,7 @@ function App() {
                         {/* 테스트 페이지 */}
                         <Route path="test" element={<Test/>}/>
                         <Route path="test2" element={<Test2/>}/>
+                        <Route path="test3" element={<Test3/>}/>
 
                     </Route>
                 </Routes>

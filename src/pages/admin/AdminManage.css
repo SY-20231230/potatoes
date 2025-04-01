@@ -3,6 +3,69 @@
     z-index: 10;
 }
 
+
+/* 테이블 필터 드랍다운 */
+.tableFilter {
+    display: flex;
+    gap: 0.5vw;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 13vw;
+    margin-top: 1vh;
+}
+
+.tableFilter .Dropdown-control {
+    width: 8vw;
+    height: 3vh;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+    color: black;
+    border-radius: 0.5vh;
+    background-color: #cccccc;
+    font-size: 1vw;
+    font-weight: bold;
+}
+
+.tableFilter .Dropdown-arrow {
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    border-color: black transparent transparent;
+}
+
+.tableFilter .Dropdown-root.is-open .Dropdown-arrow {
+    border-color: transparent transparent black;
+}
+
+.tableFilter .Dropdown-menu {
+    width: 8vw;
+    z-index: 150;
+    text-align: center;
+    color: black;
+    border-radius: 0.5vh;
+    border-color: transparent;
+    background-color: white;
+    font-size: 1vw;
+}
+
+.tableFilter .Dropdown-option:hover {
+    background-color: #FDE5E7;
+}
+
+.tableFilter .Dropdown-option.is-selected {
+    color: black;
+    border-color: transparent;
+    background-color: #E81E24;
+    font-size: 1vw;
+}
+
+/* 테이블 필터 드랍다운 끝 */
+
+
 .data_table {
     width: 80vw;
     justify-content: center;
@@ -101,7 +164,7 @@
 
 
 .table_body .damage_type {
-
+    width: 12vw;
 }
 
 .table_body .status {
@@ -167,6 +230,7 @@
     background-color: #E81E24;
     font-size: 0.7vw;
 }
+
 /* 상태 변경 드랍다운 끝 */
 
 
