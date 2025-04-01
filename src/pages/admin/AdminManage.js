@@ -27,11 +27,17 @@ const AdminManage = () => {
     });
 
     const perPage = 10;
-
     const pagesPerGroup = 10;
     const [currentPage, setPage] = useState(1);
 
-    const filteredData = road_manage.filter((road) => road.roadreport_image);
+    const [selectedDamageFilter, setSelectedDamageFilter] = useState("전체");
+    const [selectedStateFilter, setSelectedStateFilter] = useState("전체");
+
+    const filteredData = road_manage.filter((road) => {
+        const matchDamage = selectedDamageFilter === "전체" || road.roadreport_damagetype.includes(selectedDamageFilter);
+        const matchState = selectedStateFilter === "전체" || road.roadreport_status.includes(selectedStateFilter);
+        return road.roadreport_image && matchDamage && matchState;
+    });
 
     const totalPages = Math.ceil(filteredData.length / perPage);
     const totalGroups = Math.ceil(totalPages / pagesPerGroup);
@@ -42,7 +48,6 @@ const AdminManage = () => {
     const startIndex = (currentPage - 1) * perPage;
 
     const currentData = filteredData.slice(startIndex, startIndex + perPage);
-
     const changePage = (page) => {
         setPage(page);
     };
@@ -71,31 +76,29 @@ const AdminManage = () => {
         setIsModalOpen(false);
     };
 
-    const changeStatus = async (status, report_num) => {
-        console.log("변경 상태:", status.value);
-
-        try {
-            const response = await fetch(`/roadreport/delete/${report_num}/`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    roadreport_status: status.value,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('상태 변경 실패');
-            }
-
-        } catch (error) {
-            console.error('에러 발생:', error);
-            alert('실패');
-        }
+    const handleDamageFilter = (selected) => {
+        setSelectedDamageFilter(selected.value);
     };
 
-    const options = [
+    const handleStateFilter = (selected) => {
+        setSelectedStateFilter(selected.value);
+    };
+
+    const status_options = [
+        {value: '접수됨', label: '접수됨'},
+        {value: '처리중', label: '처리중'},
+        {value: '해결됨', label: '해결됨'},
+        {value: '보류중', label: '보류중'},
+    ];
+
+    const damageFilter = [
+        {value: '전체', label: '전체'},
+        {value: 'pothole', label: 'pothole'},
+        {value: 'crack', label: 'crack'},
+    ];
+
+    const stateFilter = [
+        {value: '전체', label: '전체'},
         {value: '접수됨', label: '접수됨'},
         {value: '처리중', label: '처리중'},
         {value: '해결됨', label: '해결됨'},
@@ -105,6 +108,20 @@ const AdminManage = () => {
     return (
         <div className="admin_manage">
             <br/>
+
+            <div className="tableFilter">
+                <Dropdown
+                    options={damageFilter}
+                    value={selectedDamageFilter}
+                    onChange={handleDamageFilter}
+                />
+                <Dropdown
+                    options={stateFilter}
+                    value={selectedStateFilter}
+                    onChange={handleStateFilter}
+                />
+            </div>
+
             <table className="data_table">
                 <thead className="table_head">
                 <tr>
@@ -118,8 +135,7 @@ const AdminManage = () => {
                 </tr>
                 </thead>
                 <tbody className="table_body">
-                {currentData
-                    .filter((road) => road.roadreport_image)
+                {currentData.slice().sort((a, b) => b.roadreport_num - a.roadreport_num)
                     .map((road, index) => (
                         <tr key={index}>
                             <td className="num">{road.roadreport_num}</td>
@@ -135,21 +151,21 @@ const AdminManage = () => {
                             <td className="damage_type">{road.roadreport_damagetype}</td>
                             <td className="status">
                                 <Dropdown
-                                    options={options}
+                                    options={status_options}
                                     value={road.roadreport_status}
-                                    onChange={(status) => changeStatus(status, road.roadreport_num)}
                                 />
                             </td>
                             <td className="time">{road.ymd + " " + road.hms}</td>
                             <td className="edit">
-                                <button>위치</button>
-                                <button>삭제</button>
+                                <button disabled={`true`}>위치</button>
+                                <button disabled={`true`}>삭제</button>
                             </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
 
+            {/* 페이지네이션 */}
             <div className="pagination">
                 <button
                     onClick={goToPrevGroup}
@@ -157,23 +173,23 @@ const AdminManage = () => {
                 >
                     &lt;
                 </button>
-
-                {Array.from(
-                    {length: groupEndPage - groupStartPage + 1},
-                    (_, index) => {
-                        const pageNumber = groupStartPage + index;
-                        return (
-                            <button
-                                key={pageNumber}
-                                className={`page_button ${currentPage === pageNumber ? 'active' : ''}`}
-                                onClick={() => changePage(pageNumber)}
-                            >
-                                {pageNumber}
-                            </button>
-                        );
-                    }
-                )}
-
+                {
+                    Array.from(
+                        {length: groupEndPage - groupStartPage + 1},
+                        (_, index) => {
+                            const pageNumber = groupStartPage + index;
+                            return (
+                                <button
+                                    key={pageNumber}
+                                    className={`page_button ${currentPage === pageNumber ? 'active' : ''}`}
+                                    onClick={() => changePage(pageNumber)}
+                                >
+                                    {pageNumber}
+                                </button>
+                            );
+                        }
+                    )
+                }
                 <button
                     onClick={goToNextGroup}
                     disabled={currentGroup === totalGroups}
@@ -182,6 +198,7 @@ const AdminManage = () => {
                 </button>
             </div>
 
+            {/* 이미지 모달 */}
             {isModalOpen && (
                 <div className="modal-background" onClick={closeModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>

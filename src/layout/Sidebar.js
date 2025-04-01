@@ -29,8 +29,9 @@ const Sidebar = () => {
         <div className="menu">
             <GetButton label="길찾기" icon={FaDirections} path={`/directions`}/>
             <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`}/>
-            <GetButton label="내비 구현" path={`/test`} endpoint={`roadreport/all`}/>
-            <GetButton label="get테스트2" path={`/test2`} endpoint={`roadreport/all`}/>
+            <GetButton label="테스트1 내비" path={`/test`} endpoint={`roadreport/all`}/>
+            <GetButton label="테스트2 검색" path={`/test2`} endpoint={`roadreport/all`}/>
+            <GetButton label="테스트3 변환" path={`/test3`} endpoint={`roadreport/all`}/>
         </div>
     );
 

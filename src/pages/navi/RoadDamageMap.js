@@ -13,7 +13,7 @@ const RoadDamageMap = () => {
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
             center: new naver.maps.LatLng(37.713955, 126.889456),
-            zoom: 10,
+            zoom: 16,
             minZoom: 7,
             zoomControl: true,
             zoomControlOptions: {
@@ -33,24 +33,50 @@ const RoadDamageMap = () => {
         mapInstance.current = map;
 
         // 마커
-        const markers = [
+        const potholeMarker = [
             {lat: 37.3849483, lng: 127.1229117},
             {lat: 37.643181, lng: 126.787966},
             {lat: 37.653188, lng: 126.895579},
+            {lat: 37.713052, lng: 126.888185},
+            {lat: 37.713862, lng: 126.878185},
+            {lat: 37.712000, lng: 126.888105},
             {lat: 37.658267, lng: 126.832025},
             {lat: 37.618710, lng: 126.921693},
             {lat: 37.71361, lng: 126.88947}
         ];
 
-        markers.forEach(({lat, lng}) => {
-            const markerOptions = MarkerOption({
+        const crackMarker = [
+            {lat: 37.7137, lng: 126.88939},
+            {lat: 37.3849483, lng: 127.1229117},
+            {lat: 37.713052, lng: 126.888735},
+            {lat: 37.712270, lng: 126.888046},
+            {lat: 37.711296, lng: 126.887720},
+            {lat: 37.710947, lng: 126.889934},
+            {lat: 37.712149, lng: 126.888831}
+        ];
+
+        potholeMarker.forEach(({lat, lng}) => {
+            const potholeOptions = MarkerOption({
                 lat,
                 lng,
                 iconImg: "/media/icon_pothole.png"
             });
 
             new naver.maps.Marker({
-                ...markerOptions,
+                ...potholeOptions,
+                map: map,
+            });
+        });
+
+        crackMarker.forEach(({lat, lng}) => {
+            const crackOptions = MarkerOption({
+                lat,
+                lng,
+                iconImg: "/media/icon_crack.png"
+            });
+
+            new naver.maps.Marker({
+                ...crackOptions,
                 map: map,
             });
         });

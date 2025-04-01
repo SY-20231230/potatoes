@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import './NaverAPIBotton.css';
 
-const NaverAPIButton = ({ label, start, goal }) => {
+const NaviButton = ({ label, start, goal }) => {
     const navigate = useNavigate();
 
     const handleClick = async (event) => {
@@ -15,7 +15,7 @@ const NaverAPIButton = ({ label, start, goal }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("NaverGetButton 데이터:", data);
+                console.log("NaviButton 데이터:", data);
 
                 if (data.route?.trafast?.[0]?.path) {
                     navigate("/directions", { state: { fetchedData: data } });
@@ -37,4 +37,4 @@ const NaverAPIButton = ({ label, start, goal }) => {
     );
 };
 
-export default NaverAPIButton;
+export default NaviButton;

@@ -21,13 +21,16 @@ const AdminData = () => {
 
     const agoWeek = new Date(road_date);
     agoWeek.setDate(road_date.getDate() - 7);
-    const roadWeek = `${road_date.getFullYear()}-${(road_date.getMonth() + 1).toString().padStart(2, "0")}-${agoWeek.getDate().toString().padStart(2, "0")}`;
+    const roadWeek = road_date.getDate() < 8 ? (`${road_date.getFullYear()}-${(road_date.getMonth()).toString().padStart(2, "0")}-${agoWeek.getDate().toString().padStart(2, "0")}`) :
+        (`${road_date.getFullYear()}-${(road_date.getMonth() + 1).toString().padStart(2, "0")}-${agoWeek.getDate().toString().padStart(2, "0")}`);
 
     const agoMonth = new Date(road_date);
     agoMonth.setDate(road_date.getDate() - 30);
     const roadMonth = `${road_date.getFullYear()}-${(agoMonth.getMonth() + 1).toString().padStart(2, "0")}-${agoMonth.getDate().toString().padStart(2, "0")}`;
 
     console.log("현재 연월일: ", now_ymd);
+    console.log("roadWeek: ", roadWeek);
+    console.log("roadMonth: ", roadMonth);
 
     filteredData.forEach((road) => {
         if (road.roadreport_time) {
