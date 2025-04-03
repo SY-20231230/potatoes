@@ -13,7 +13,11 @@ const Directions = () => {
 
 
     const start = location.state?.fetchedData?.route?.trafast?.[0]?.path?.[0] || [];
-    const goal = location.state?.fetchedData?.route?.trafast?.[0]?.path?.[road_navi.length-1] || [];
+    const goal = location.state?.fetchedData?.route?.trafast?.[0]?.path?.[road_navi.length - 1] || [];
+
+    const polylineInstance = useRef(null);
+    const startMarkerInstance = useRef(null);
+    const goalMarkerInstance = useRef(null);
 
     useEffect(() => {
         if (!naver || !document.getElementById("map")) return;
@@ -31,36 +35,41 @@ const Directions = () => {
 
         const pathData = road_navi.map(coord => new naver.maps.LatLng(coord[1], coord[0]));
 
-        new naver.maps.Polyline({
+        if (polylineInstance.current) {
+            polylineInstance.current.setMap(null);
+        }
+        if (startMarkerInstance.current) {
+            startMarkerInstance.current.setMap(null);
+        }
+        if (goalMarkerInstance.current) {
+            goalMarkerInstance.current.setMap(null);
+        }
+
+        polylineInstance.current = new naver.maps.Polyline({
             map,
             path: pathData,
             strokeColor: "#E81E24",
             strokeWeight: 4,
         });
 
-        const startOptions = ({
+        map.setCenter(start);
+        map.setZoom(16);
+
+        startMarkerInstance.current = new naver.maps.Marker({
             map,
-            position: start,
+            position: new naver.maps.LatLng(start[1], start[0]),
             icon: {
                 url: "/media/icon_location.png",
             },
         });
 
-        new naver.maps.Marker({
-            ...startOptions,
-        })
-
-        const goalOptions = ({
+        goalMarkerInstance.current = new naver.maps.Marker({
             map,
-            position: goal,
+            position: new naver.maps.LatLng(goal[1], goal[0]),
             icon: {
                 url: "/media/icon_location_goal.png",
             },
         });
-
-        new naver.maps.Marker({
-            ...goalOptions,
-        })
 
     }, [map, road_navi]);
 
