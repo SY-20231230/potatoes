@@ -9,7 +9,7 @@ const NaviButton = ({ label, start, goal }) => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`http://192.168.0.157:8000/naver/proxy/?start=${start}&goal=${goal}`, {
+            const response = await fetch(`http://localhost:8000/naver/proxy/?start=${start}&goal=${goal}`, {
                 method: "GET",
             });
 

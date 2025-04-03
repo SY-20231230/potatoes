@@ -9,7 +9,7 @@ const SearchButton = ({label, query, path}) => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`http://192.168.0.157:8000/naver/search/?query=${query}`, {
+            const response = await fetch(`http://localhost:8000/naver/search/?query=${query}`, {
                 method: "GET",
             });
 
