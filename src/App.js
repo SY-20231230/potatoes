@@ -23,9 +23,9 @@ import AdminManage from "./pages/admin/AdminManage";
 
 import NotFound from "./pages/NotFound";
 
-import Test from "./Test";
-import Test2 from "./Test2";
-import Test3 from "./Test3";
+import Test from "./pages/Test";
+import Test2 from "./pages/Test2";
+import Test3 from "./pages/Test3";
 
 function App() {
     const naverMapClientId = process.env.REACT_APP_NAVER_MAP_API_KEY;

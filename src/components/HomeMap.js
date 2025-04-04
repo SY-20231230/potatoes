@@ -1,17 +1,14 @@
-// HomeMap.js
-import React, {useEffect, useRef, useState} from "react";
-import MarkerOption from "./MarkerOption";
-import Search from "./Search";
+import React, {useEffect, useRef} from "react";
+import Search from "../components/Search";
 
 const HomeMap = () => {
-    const naver = window.naver;
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
 
-    const [interactionOn, setInteractionOn] = useState(true);
-    const [controlsOn, setControlsOn] = useState(true);
-
     useEffect(() => {
+        if (!window.naver) return;
+        const {naver} = window;
+
         const map = new naver.maps.Map(mapRef.current, {
             center: new naver.maps.LatLng(37.713955, 126.889456),
             zoom: 13,
@@ -44,20 +41,41 @@ const HomeMap = () => {
             map.setZoom(15);
             console.log("Coordinates:", location.toString());
 
-            // 위치 마커
-            const locationMarker = MarkerOption({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                iconImg: "/media/icon_location.png"
-            });
+            // 위치 마커 추가
             new naver.maps.Marker({
-                ...locationMarker,
-                map: map,
+                position: location,
+                map,
+                icon: {
+                    url: "/media/icon_navigation.png",
+                    size: new naver.maps.Size(32, 32),
+                    origin: new naver.maps.Point(0, 0),
+                    anchor: new naver.maps.Point(16, 16),
+                },
             });
+            const locationBtnHtml =
+                '<img src="/media/icon_gps.png" style="background-color: #FFFFFF; padding: 0.5vh; cursor: pointer; border: 1px solid #E81E24; border-radius: 0.5vh">';
+
+            naver.maps.Event.once(map, "init", function () {
+                const customControl = new naver.maps.CustomControl(locationBtnHtml, {
+                    position: naver.maps.Position.LEFT_CENTER,
+                });
+
+                customControl.setMap(map);
+
+                naver.maps.Event.addDOMListener(
+                    customControl.getElement(),
+                    "click",
+                    function () {
+                        map.setCenter(new naver.maps.LatLng(position.coords.latitude, position.coords.longitude));
+                    }
+                );
+
+            });
+
         }
 
         function onErrorGeolocation() {
-            const center = map.getCenter();
+            console.error("Geolocation을 가져올 수 없습니다.");
         }
 
     }, []);
@@ -65,7 +83,7 @@ const HomeMap = () => {
     return (
         <>
             <div id="map" ref={mapRef} style={{width: "93.9%", height: "100%", marginBottom: "10px"}}/>
-            <Search></Search>
+            <Search/>
         </>
     );
 };

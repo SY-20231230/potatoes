@@ -21,17 +21,16 @@ const Sidebar = () => {
     const user_id = sessionStorage.getItem("user_id");
     const master_id = sessionStorage.getItem("master_id");
 
-    // user_name 표시 간소화
     const truncLabel = user_id && user_id.length > 4 ? user_id.slice(0, 4) + ".." : user_id;
 
     // 공통 메뉴
     const commonMenu = (
         <div className="menu">
             <GetButton label="길찾기" icon={FaDirections} path={`/directions`}/>
-            <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`}/>
-            <GetButton label="테스트1 내비" path={`/test`} endpoint={`roadreport/all`}/>
-            <GetButton label="테스트2 검색" path={`/test2`} endpoint={`roadreport/all`}/>
-            <GetButton label="테스트3 변환" path={`/test3`} endpoint={`roadreport/all`}/>
+            <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`} endpoint={`roadreport/all`}/>
+            <GetButton label="1 " path={`/test`} endpoint={`roadreport/all`}/>
+            <GetButton label="2 " path={`/test2`} endpoint={`roadreport/all`}/>
+            <GetButton label="3 " path={`/test3`} endpoint={`roadreport/all`}/>
         </div>
     );
 
