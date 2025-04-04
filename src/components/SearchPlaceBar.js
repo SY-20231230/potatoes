@@ -130,7 +130,7 @@ const SearchPlaceBar = ({mapInstance}) => {
                     ref={goalInputRef}
                 />
 
-                <NaviButton label="길찾기" start={start} goal={goal} path={`/directions`}/>
+                <NaviButton label="길찾기" start={start} goal={goal} path={`/test`}/>
             </div>
 
             {searchData.length > 0 && (

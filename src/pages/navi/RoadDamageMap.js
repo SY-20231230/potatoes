@@ -1,14 +1,17 @@
 // HomeMap.js
-import React, {useEffect, useRef, useState} from "react";
-import MarkerOption from "../../components/MarkerOption";
+import React, {useEffect, useRef} from "react";
+import {useLocation} from "react-router-dom";
 
 const RoadDamageMap = () => {
     const naver = window.naver;
+    const location = useLocation();
+
     const mapRef = useRef(null);
     const mapInstance = useRef(null);
 
-    const [interactionOn, setInteractionOn] = useState(true);
-    const [controlsOn, setControlsOn] = useState(true);
+    const road_data = location.state?.fetchedData || [];
+
+    const filteredData = road_data.filter(road => road.roadreport_image);
 
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
@@ -32,56 +35,28 @@ const RoadDamageMap = () => {
 
         mapInstance.current = map;
 
-        // 마커
-        const potholeMarker = [
-            {lat: 37.3849483, lng: 127.1229117},
-            {lat: 37.643181, lng: 126.787966},
-            {lat: 37.653188, lng: 126.895579},
-            {lat: 37.713052, lng: 126.888185},
-            {lat: 37.713862, lng: 126.878185},
-            {lat: 37.712000, lng: 126.888105},
-            {lat: 37.658267, lng: 126.832025},
-            {lat: 37.618710, lng: 126.921693},
-            {lat: 37.71361, lng: 126.88947}
-        ];
+        filteredData.forEach((road, index) => {
+            if (road.roadreport_latlng) {
+                const [lng, lat] = road.roadreport_latlng.split(",").map(coord => parseFloat(coord.trim()));
 
-        const crackMarker = [
-            {lat: 37.7137, lng: 126.88939},
-            {lat: 37.3849483, lng: 127.1229117},
-            {lat: 37.713052, lng: 126.888735},
-            {lat: 37.712270, lng: 126.888046},
-            {lat: 37.711296, lng: 126.887720},
-            {lat: 37.710947, lng: 126.889934},
-            {lat: 37.712149, lng: 126.888831}
-        ];
-
-        potholeMarker.forEach(({lat, lng}) => {
-            const potholeOptions = MarkerOption({
-                lat,
-                lng,
-                iconImg: "/media/icon_pothole.png"
-            });
-
-            new naver.maps.Marker({
-                ...potholeOptions,
-                map: map,
-            });
+                new naver.maps.Marker({
+                    position: new naver.maps.LatLng(lat, lng),
+                    map: map,
+                    icon: {
+                        url: road.roadreport_damagetype === "pothole"
+                            ? "/media/icon_pothole.png"
+                            : "/media/icon_crack.png",
+                        size: new naver.maps.Size(32, 32),
+                        origin: new naver.maps.Point(0, 0),
+                        anchor: new naver.maps.Point(16, 16)
+                    }
+                });
+            } else {
+                console.log(`num ${road.roadreport_num} latlng 없음`);
+            }
         });
 
-        crackMarker.forEach(({lat, lng}) => {
-            const crackOptions = MarkerOption({
-                lat,
-                lng,
-                iconImg: "/media/icon_crack.png"
-            });
-
-            new naver.maps.Marker({
-                ...crackOptions,
-                map: map,
-            });
-        });
-
-    }, []);
+    }, [filteredData]);
 
     return (
         <>

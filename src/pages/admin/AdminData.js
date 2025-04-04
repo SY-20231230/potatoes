@@ -1,14 +1,12 @@
-import React, {useEffect, useRef, useState, useMemo} from "react";
+import React, {useEffect, useRef} from "react";
 import {useLocation} from "react-router-dom";
 import './AdminData.css';
 import CountEvent from "../../components/CountEvent";
-import MarkerOption from "../../components/MarkerOption";
 
 const AdminData = () => {
     const location = useLocation();
     const road_data = location.state?.fetchedData || [];
 
-    // 이미지 있는 데이터만 필터링
     const filteredData = road_data.filter(road => road.roadreport_image);
 
     const naver = window.naver;
@@ -45,8 +43,8 @@ const AdminData = () => {
     // 지도
     useEffect(() => {
         const map = new naver.maps.Map(mapRef.current, {
-            center: new naver.maps.LatLng(37.713955, 126.889456),
-            zoom: 13,
+            center: new naver.maps.LatLng(35.846590, 127.844377),
+            zoom: 7,
             minZoom: 7,
             zoomControl: true,
             zoomControlOptions: {
@@ -65,55 +63,29 @@ const AdminData = () => {
 
         mapInstance.current = map;
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(onSuccessGeolocation, onErrorGeolocation);
-        }
+        filteredData.forEach((road, index) => {
+            if (road.roadreport_latlng) {
+                const [lng, lat] = road.roadreport_latlng.split(",").map(coord => parseFloat(coord.trim()));
 
-        function onSuccessGeolocation(position) {
-            const location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            map.setCenter(location);
-            map.setZoom(10);
-            console.log("Coordinates:", location.toString());
-
-            const locationMarker = MarkerOption({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                iconImg: "/media/icon_location.png"
-            });
-
-            new naver.maps.Marker({
-                ...locationMarker,
-                map: map,
-            });
-        }
-
-        function onErrorGeolocation() {
-            console.warn("Geolocation error");
-        }
-
-        const markers = [
-            {lat: 37.3849483, lng: 127.1229117},
-            {lat: 37.643181, lng: 126.787966},
-            {lat: 37.653188, lng: 126.895579},
-            {lat: 37.658267, lng: 126.832025},
-            {lat: 37.618710, lng: 126.921693},
-            {lat: 37.71361, lng: 126.88947}
-        ];
-
-        markers.forEach(({lat, lng}) => {
-            const markerOptions = MarkerOption({
-                lat,
-                lng,
-                iconImg: "/media/icon_pothole.png"
-            });
-
-            new naver.maps.Marker({
-                ...markerOptions,
-                map: map,
-            });
+                new naver.maps.Marker({
+                    position: new naver.maps.LatLng(lat, lng),
+                    map: map,
+                    icon: {
+                        url: road.roadreport_damagetype === "pothole"
+                            ? "/media/icon_pothole.png"
+                            : "/media/icon_crack.png",
+                        size: new naver.maps.Size(32, 32),
+                        origin: new naver.maps.Point(0, 0),
+                        anchor: new naver.maps.Point(16, 16)
+                    }
+                });
+            } else {
+                console.log(`num ${road.roadreport_num} latlng 없음`);
+            }
         });
 
     }, [filteredData]);
+
 
     return (
         <div className="admin_data">

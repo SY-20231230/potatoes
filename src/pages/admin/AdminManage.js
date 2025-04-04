@@ -10,7 +10,7 @@ const AdminManage = () => {
 
     road_manage.forEach((road) => {
         if (road.roadreport_latlng) {
-            const [lat, lng] = road.roadreport_latlng.split(",");
+            const [lng, lat] = road.roadreport_latlng.split(",");
             road.lat = lat;
             road.lng = lng;
         } else {
@@ -36,7 +36,8 @@ const AdminManage = () => {
     const filteredData = road_manage.filter((road) => {
         const matchDamage = selectedDamageFilter === "전체" || road.roadreport_damagetype.includes(selectedDamageFilter);
         const matchState = selectedStateFilter === "전체" || road.roadreport_status.includes(selectedStateFilter);
-        return road.roadreport_image && matchDamage && matchState;
+        const excludeResolved = selectedStateFilter === "전체" ? road.roadreport_status !== "해결됨" : matchState;
+        return road.roadreport_image && excludeResolved && matchDamage && matchState;
     });
 
     const totalPages = Math.ceil(filteredData.length / perPage);
