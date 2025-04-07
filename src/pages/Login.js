@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
+import "./Login.css";
 
 const Login = () => {
 
@@ -34,10 +35,11 @@ const Login = () => {
 
     return (
         <div className="login_content">
-            <span>login</span>
-            <br/>
-            <button onClick={handleUser}>회원</button>
-            <button onClick={handleMaster}>관리자</button>
+            <div className={`title`}>login</div>
+            <div className={`button_group`}>
+                <button className={`user_button`} onClick={handleUser}>회원</button>
+                <button className={`admin_button`} onClick={handleMaster}>관리자</button>
+            </div>
         </div>
     );
 };
