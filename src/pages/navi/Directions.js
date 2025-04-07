@@ -133,7 +133,7 @@ const Directions = () => {
             map,
             position: new naver.maps.LatLng(goal[1], goal[0]),
             icon: {
-                content : `<div>도착</div>`,
+                url: "/media/icon_location_goal.png",
             },
         });
 

@@ -1,0 +1,23 @@
+.login_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20vh;
+}
+
+.title {
+    margin-bottom: 2vh;
+    font-size: 2vw;
+    font-weight: bold;
+}
+
+.button_group {
+    display: flex;
+    gap: 1vw;
+}
+
+.user_button, .admin_button {
+    padding: 0.5rem 1rem;
+    font-size: 1vw;
+    cursor: pointer;
+}

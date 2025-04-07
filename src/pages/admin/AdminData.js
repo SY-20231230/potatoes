@@ -63,26 +63,40 @@ const AdminData = () => {
 
         mapInstance.current = map;
 
-        filteredData.forEach((road, index) => {
+        const shownLatLngSet = new Set();
+
+        filteredData.forEach((road) => {
             if (road.roadreport_latlng) {
                 const [lng, lat] = road.roadreport_latlng.split(",").map(coord => parseFloat(coord.trim()));
+                const latlngKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
 
-                new naver.maps.Marker({
-                    position: new naver.maps.LatLng(lat, lng),
-                    map: map,
-                    icon: {
-                        url: road.roadreport_damagetype === "pothole"
-                            ? "/media/icon_pothole.png"
-                            : "/media/icon_crack.png",
-                        size: new naver.maps.Size(32, 32),
-                        origin: new naver.maps.Point(0, 0),
-                        anchor: new naver.maps.Point(16, 16)
-                    }
-                });
+                if (!shownLatLngSet.has(latlngKey)) {
+                    shownLatLngSet.add(latlngKey);
+
+                    const marker = new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lat, lng),
+                        map: map,
+                        icon: {
+                            url: road.roadreport_damagetype.includes("pothole")
+                                ? "/media/icon_pothole.png"
+                                : (road.roadreport_damagetype.includes("crack")
+                                    ? "/media/icon_crack.png"
+                                    : "/media/icon_sinkhole.png"),
+                            size: new naver.maps.Size(32, 32),
+                            origin: new naver.maps.Point(0, 0),
+                            anchor: new naver.maps.Point(16, 16)
+                        }
+                    });
+
+                    console.log("마커 생성됨:", marker);
+                    console.log(`좌표: ${lat}, ${lng}`);
+                    console.log(shownLatLngSet.add(latlngKey));
+                }
             } else {
                 console.log(`num ${road.roadreport_num} latlng 없음`);
             }
         });
+
 
     }, [filteredData]);
 
