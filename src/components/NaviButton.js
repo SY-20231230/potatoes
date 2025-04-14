@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import './NaverAPIBotton.css';
 
-const NaviButton = ({ label, start, goal }) => {
+const NaviButton = ({ label, start, goal, pathTo }) => {
     const navigate = useNavigate();
 
     const handleClick = async (event) => {
@@ -18,7 +18,7 @@ const NaviButton = ({ label, start, goal }) => {
                 console.log("NaviButton 데이터:", data);
 
                 if (data.route?.trafast?.[0]?.path) {
-                    navigate("/directions", { state: { fetchedData: data } });
+                    navigate(pathTo, { state: { fetchedData: data } });
                 } else {
                     console.error("길찾기 데이터 없음");
                 }

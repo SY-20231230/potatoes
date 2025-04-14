@@ -1,20 +1,20 @@
 import React, {useState, useRef, useEffect} from "react";
-import './SearchPlaceBar.css';
-
 import {IoIosNavigate} from "react-icons/io";
-import NaviButton from "./naviButton";
 
-const SearchPlaceBar = ({mapInstance}) => {
-    const [startInput, setStartInput] = useState("");
-    const [goalInput, setGoalInput] = useState("");
-    const [searchData, setSearchData] = useState([]);
+import './SearchPlaceBar.css';
+import NaviButton from "./NaviButton";
+
+const SearchPlaceBar = () => {
+    const [inputStart, setInputStart] = useState("");
+    const [inputGoal, setGoalInput] = useState("");
+    const [searchPlace, setPlaceData] = useState([]);
     const [activeInput, setActiveInput] = useState("start");
 
     const [start, setStart] = useState("");
     const [goal, setGoal] = useState("");
 
-    const startInputRef = useRef(null);
-    const goalInputRef = useRef(null);
+    const inputStartRef = useRef(null);
+    const inputGoalRef = useRef(null);
 
     useEffect(() => {
         if (!window.naver) {
@@ -24,15 +24,15 @@ const SearchPlaceBar = ({mapInstance}) => {
 
     // 출발지 검색
     const searchStart = async (e) => {
-        if (e.key === "Enter" && startInput !== "") {
+        if (e.key === "Enter" && inputStart !== "") {
             try {
-                const response = await fetch(`http://localhost:8000/naver/search/?query=${startInput}`, {
+                const response = await fetch(`http://localhost:8000/naver/search/?query=${inputStart}`, {
                     method: "GET",
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    setSearchData(data.items);
+                    setPlaceData(data.items);
                     setActiveInput("start");
                 } else {
                     console.error("요청 실패:", response.statusText);
@@ -45,15 +45,15 @@ const SearchPlaceBar = ({mapInstance}) => {
 
     // 목적지 검색
     const searchGoal = async (e) => {
-        if (e.key === "Enter" && goalInput !== "") {
+        if (e.key === "Enter" && inputGoal !== "") {
             try {
-                const response = await fetch(`http://localhost:8000/naver/search/?query=${goalInput}`, {
+                const response = await fetch(`http://localhost:8000/naver/search/?query=${inputGoal}`, {
                     method: "GET",
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    setSearchData(data.items);
+                    setPlaceData(data.items);
                     setActiveInput("goal");
                 } else {
                     console.error("요청 실패:", response.statusText);
@@ -69,12 +69,12 @@ const SearchPlaceBar = ({mapInstance}) => {
         const textAddr = place.address;
 
         if (activeInput === "start") {
-            setStartInput(title);
+            setInputStart(title);
         } else {
             setGoalInput(title);
         }
 
-        setSearchData([]);
+        setPlaceData([]);
 
         if (!window.naver) {
             alert("네이버 지도 API 로드 안됨");
@@ -111,11 +111,11 @@ const SearchPlaceBar = ({mapInstance}) => {
                     id="search_start"
                     className="search_text"
                     placeholder="출발지를 입력하세요."
-                    value={startInput}
-                    onChange={(e) => setStartInput(e.target.value)}
+                    value={inputStart}
+                    onChange={(e) => setInputStart(e.target.value)}
                     onKeyDown={searchStart}
                     onFocus={() => setActiveInput("start")}
-                    ref={startInputRef}
+                    ref={inputStartRef}
                 />
                 &nbsp;
                 <input
@@ -123,19 +123,19 @@ const SearchPlaceBar = ({mapInstance}) => {
                     id="search_goal"
                     className="search_text"
                     placeholder="목적지를 입력하세요."
-                    value={goalInput}
+                    value={inputGoal}
                     onChange={(e) => setGoalInput(e.target.value)}
                     onKeyDown={searchGoal}
                     onFocus={() => setActiveInput("goal")}
-                    ref={goalInputRef}
+                    ref={inputGoalRef}
                 />
 
-                <NaviButton label="길찾기" start={start} goal={goal} path={`/test`}/>
+                <NaviButton label="길찾기" start={start} goal={goal} path={`/directions`}/>
             </div>
 
-            {searchData.length > 0 && (
+            {searchPlace.length > 0 && (
                 <div className="searchResult">
-                    {searchData.map((item, index) => (
+                    {searchPlace.map((item, index) => (
                         <div
                             className="perResult"
                             key={index}
