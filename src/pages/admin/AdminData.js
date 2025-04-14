@@ -63,37 +63,41 @@ const AdminData = () => {
 
         mapInstance.current = map;
 
-        const shownLatLngSet = new Set();
-
         filteredData.forEach((road) => {
             if (road.roadreport_latlng) {
                 const [lng, lat] = road.roadreport_latlng.split(",").map(coord => parseFloat(coord.trim()));
-                const latlngKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
 
-                if (!shownLatLngSet.has(latlngKey)) {
-                    shownLatLngSet.add(latlngKey);
+                if (road.roadreport_damagetype.includes("pothole")) {
 
-                    const marker = new naver.maps.Marker({
-                        position: new naver.maps.LatLng(lat, lng),
+                    new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lng, lat),
                         map: map,
                         icon: {
-                            url: road.roadreport_damagetype.includes("pothole")
-                                ? "/media/icon_pothole.png"
-                                : (road.roadreport_damagetype.includes("crack")
-                                    ? "/media/icon_crack.png"
-                                    : "/media/icon_sinkhole.png"),
+                            url: "/media/icon_pothole.png",
+                            size: new naver.maps.Size(32, 32),
+                            origin: new naver.maps.Point(0, 0),
+                            anchor: new naver.maps.Point(16, 16)
+                        }
+                    });
+                    console.log(`좌표: ${lat}, ${lng}`);
+
+                } else if (road.roadreport_damagetype.includes("crack")) {
+
+                    new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lng, lat),
+                        map: map,
+                        icon: {
+                            url: "/media/icon_crack.png",
                             size: new naver.maps.Size(32, 32),
                             origin: new naver.maps.Point(0, 0),
                             anchor: new naver.maps.Point(16, 16)
                         }
                     });
 
-                    console.log("마커 생성됨:", marker);
                     console.log(`좌표: ${lat}, ${lng}`);
-                    console.log(shownLatLngSet.add(latlngKey));
+                } else {
+                    console.log(`num ${road.roadreport_num} latlng 없음`);
                 }
-            } else {
-                console.log(`num ${road.roadreport_num} latlng 없음`);
             }
         });
 

@@ -35,24 +35,48 @@ const RoadDamageMap = () => {
 
         mapInstance.current = map;
 
-        filteredData.forEach((road, index) => {
+        const cntPothole = new Set();
+        const cntCrack = new Set();
+
+        filteredData.forEach((road) => {
             if (road.roadreport_latlng) {
                 const [lng, lat] = road.roadreport_latlng.split(",").map(coord => parseFloat(coord.trim()));
+                const keyPothole = `${lat.toFixed(2)},${lng.toFixed(2)}`;
+                const keyCrack = `${lat.toFixed(2)},${lng.toFixed(2)}`;
 
-                new naver.maps.Marker({
-                    position: new naver.maps.LatLng(lat, lng),
-                    map: map,
-                    icon: {
-                        url: road.roadreport_damagetype === "pothole"
-                            ? "/media/icon_pothole.png"
-                            : "/media/icon_crack.png",
-                        size: new naver.maps.Size(32, 32),
-                        origin: new naver.maps.Point(0, 0),
-                        anchor: new naver.maps.Point(16, 16)
-                    }
-                });
-            } else {
-                console.log(`num ${road.roadreport_num} latlng 없음`);
+                if (!cntPothole.has(keyPothole) && road.roadreport_damagetype.includes("pothole")) {
+                    cntPothole.add(keyPothole);
+
+                    new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lng, lat),
+                        map: map,
+                        icon: {
+                            url: "/media/icon_pothole.png",
+                            size: new naver.maps.Size(32, 32),
+                            origin: new naver.maps.Point(0, 0),
+                            anchor: new naver.maps.Point(16, 16)
+                        }
+                    });
+                    console.log(`좌표: ${lat}, ${lng}`);
+
+                } else if (!cntCrack.has(keyCrack) && road.roadreport_damagetype.includes("crack")) {
+                    cntCrack.add(keyCrack);
+
+                    new naver.maps.Marker({
+                        position: new naver.maps.LatLng(lng, lat),
+                        map: map,
+                        icon: {
+                            url: "/media/icon_crack.png",
+                            size: new naver.maps.Size(32, 32),
+                            origin: new naver.maps.Point(0, 0),
+                            anchor: new naver.maps.Point(16, 16)
+                        }
+                    });
+
+                    console.log(`좌표: ${lat}, ${lng}`);
+                } else {
+                    console.log(`num ${road.roadreport_num} latlng 없음`);
+                }
             }
         });
 

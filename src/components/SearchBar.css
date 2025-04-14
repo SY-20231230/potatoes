@@ -26,3 +26,25 @@
     border: 0.3vh solid #E81E24;
     border-radius: 0.5vh;
 }
+
+.searchBarResult {
+    position: absolute;
+    top: 8vh;
+    width: 22vw;
+    background-color: #FFFFFF;
+}
+
+.perResult {
+    margin: 0.5vh 0.5vw 0 0.5vw;
+}
+
+.resultTitle {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+
+.resultAddress {
+    margin: 0;
+    padding: 0;
+}

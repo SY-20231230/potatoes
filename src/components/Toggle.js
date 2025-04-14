@@ -1,15 +1,19 @@
-import React, {useState} from "react";
-import "./Toggle.css";
+import React from 'react';
 
-const Toggle = ({label, isOn, setIsOn}) => {
-    const clickToggle = () => {
-        setIsOn(!isOn);
-    };
-
+const Toggle = ({ label, isOn, onclick }) => {
     return (
         <button
-            className={`toggle_button ${isOn ? "on" : "off"}`}
-            onClick={clickToggle}>
+            onClick={onclick}
+            style={{
+                backgroundColor: isOn ? '#4CAF50' : '#ccc',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                transition: '0.3s'
+            }}
+        >
             {label}
         </button>
     );

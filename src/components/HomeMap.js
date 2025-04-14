@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from "react";
-import Search from "../components/Search";
+import Search from "./SearchBar";
 
 const HomeMap = () => {
     const mapRef = useRef(null);
@@ -52,11 +52,11 @@ const HomeMap = () => {
                     anchor: new naver.maps.Point(16, 16),
                 },
             });
-            const locationBtnHtml =
+            const gpsMarker =
                 '<img src="/media/icon_gps.png" style="background-color: #FFFFFF; padding: 0.5vh; cursor: pointer; border: 1px solid #E81E24; border-radius: 0.5vh">';
 
             naver.maps.Event.once(map, "init", function () {
-                const customControl = new naver.maps.CustomControl(locationBtnHtml, {
+                const customControl = new naver.maps.CustomControl(gpsMarker, {
                     position: naver.maps.Position.LEFT_CENTER,
                 });
 
