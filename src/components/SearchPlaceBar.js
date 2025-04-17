@@ -135,14 +135,14 @@ const SearchPlaceBar = () => {
 
             {searchPlace.length > 0 && (
                 <div className="searchResult">
-                    {searchPlace.map((item, index) => (
+                    {searchPlace.map((road, index) => (
                         <div
                             className="perResult"
                             key={index}
-                            onClick={() => handlePlaceClick(item)}
+                            onClick={() => handlePlaceClick(road)}
                         >
-                            <p className="resultTitle">{item.title.replace(/<b>|<\/b>/g, '')}</p>
-                            <p className="resultAddress">{item.address}</p>
+                            <p className="resultTitle">{road.title.replace(/<b>|<\/b>/g, '')}</p>
+                            <p className="resultAddress">{road.address}</p>
                             <hr className="contour"/>
                         </div>
                     ))}

@@ -63,6 +63,21 @@
     font-size: 1vw;
 }
 
+.PiServerControlBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 0.9vw;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: #dddddd;
+    border-color: transparent;
+    border-radius: 1vh;
+
+    width: 4vw;
+}
+
 /* 테이블 필터 드랍다운 끝 */
 
 
