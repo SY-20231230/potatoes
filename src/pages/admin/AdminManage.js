@@ -3,6 +3,8 @@ import {useLocation} from "react-router-dom";
 import Dropdown from 'react-dropdown';
 import './AdminManage.css';
 import "react-dropdown/style.css";
+import PiServerControl from "../../components/PiServerControl";
+import {Button} from "@mui/material";
 
 const AdminManage = () => {
     const location = useLocation();
@@ -121,6 +123,8 @@ const AdminManage = () => {
                     value={selectedStateFilter}
                     onChange={handleStateFilter}
                 />
+                <PiServerControl switchCommand={`on`}/>
+                <PiServerControl switchCommand={`off`}/>
             </div>
 
             <table className="data_table">

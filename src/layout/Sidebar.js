@@ -11,12 +11,10 @@ import {FcStatistics} from "react-icons/fc";
 import {MdManageSearch} from "react-icons/md";
 // session icon
 import {IoIosLogIn, IoIosLogOut} from "react-icons/io";
-import { FaRegStar } from "react-icons/fa";
+import {FaRegStar} from "react-icons/fa";
 import {FaRegUserCircle} from "react-icons/fa";
 
 const Sidebar = () => {
-
-    const roadreport_id = "";
 
     const user_id = sessionStorage.getItem("user_id");
     const master_id = sessionStorage.getItem("master_id");
@@ -28,9 +26,9 @@ const Sidebar = () => {
         <div className="menu">
             <GetButton label="길찾기" icon={FaDirections} path={`/directions`}/>
             <GetButton label="파손 지도" icon={FaRegMap} path={`/damagemap`} endpoint={`roadreport/all`}/>
-            <GetButton label="1 홈검색" path={`/test`} endpoint={`roadreport/all`}/>
-            <GetButton label="2" path={`/test2`} endpoint={`roadreport/all`}/>
-            <GetButton label="3 하드" path={`/test3`} endpoint={`roadreport/all`}/>
+            <GetButton label="1 길찾기" path={`/test`} endpoint={`roadreport/all`}/>
+            <GetButton label="2 검색컴포넌트" path={`/test2`} endpoint={`roadreport/all`}/>
+            <GetButton label="3" path={`/test3`} endpoint={`roadreport/all`}/>
         </div>
     );
 
