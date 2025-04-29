@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     MasterSignUp, MasterLogin, UserSignUp, UserLogin, UserSignOut, UserInfo,RoadReportSelectWithCoords,
     RoadReportAll, RoadReportSelect, HardwarePull, AiPull, RoadReportDelete, RoadReportEdit, UsersViewSet, MasterViewSet, UserHistoryViewSet, RoadReportViewSet,
-    NaverMapProxy,RoadReportCreate,NaverLocalSearch
+    NaverMapProxy,RoadReportCreate,NaverLocalSearch,UserUpdate,UserPasswordChange
 )
 from . import views
 # Router 설정
@@ -27,6 +27,8 @@ urlpatterns = [
     path('users/login', UserLogin.as_view(), name='user-login'),
     path('users/signout', UserSignOut.as_view(), name='user-signout'),
     path('users/info/<str:user_id>/', UserInfo.as_view(), name='user-info'),
+    path('users/update/<str:user_id>/', UserUpdate.as_view(), name='user-update'),
+    path('users/update/password/<str:user_id>/', UserPasswordChange.as_view(), name='user-password-change'),
 
     # 도로 보고 API
     path('roadreport/all', RoadReportAll.as_view(), name='roadreport-all'),
