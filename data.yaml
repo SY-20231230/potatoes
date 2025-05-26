@@ -1,0 +1,13 @@
+train: /content/DoroSeeV1/train/images
+val: /content/DoroSeeV1/valid/images
+test: /content/DoroSeeV1/test/images
+
+nc: 2
+names: ['Crack', 'pothole']
+
+roboflow:
+  workspace: dorosee
+  project: dorosee
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/dorosee/dorosee/dataset/2

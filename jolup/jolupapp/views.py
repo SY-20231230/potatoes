@@ -2,6 +2,7 @@ import cv2
 from django.shortcuts import render
 from django.http import StreamingHttpResponse
 import time
+import os
 # Create your views here.
 from .serializers import UsersSerializer, MasterSerializer, UserHistorySerializer, RoadReportSerializer
 from django.contrib.auth.hashers import make_password, check_password
@@ -14,25 +15,40 @@ from .models import Users, Master, UserHistory, RoadReport
 from django.http import JsonResponse
 import pytz
 from datetime import datetime
+import requests
+from django.conf import settings
+import torch
+import numpy as np
+from pathlib import Path
+from ultralytics import YOLO
+from functools import lru_cache
+import pathlib #이 세줄이 욜로 리눅스 문제일때때
+temp = pathlib.PosixPath 
+pathlib.PosixPath = pathlib.WindowsPath
 
-def index(request): #임시 메인페이지 출력문
+
+def index(request):  # 임시 메인페이지 출력문
     return JsonResponse({"message": "Django 서버가 정상적으로 동작 중입니다."})
 
 
 # Users ViewSet
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = Users.objects.all()  # 모든 유저 데이터 가져오기
-    serializer_class = UsersSerializer  
+    serializer_class = UsersSerializer
 
 # Master ViewSet
+
+
 class MasterViewSet(viewsets.ModelViewSet):
     queryset = Master.objects.all()
     serializer_class = MasterSerializer
+
 
 # UserHistory ViewSet
 class UserHistoryViewSet(viewsets.ModelViewSet):
     queryset = UserHistory.objects.all()
     serializer_class = UserHistorySerializer
+
 
 # RoadReport ViewSet
 class RoadReportViewSet(viewsets.ModelViewSet):
@@ -40,7 +56,7 @@ class RoadReportViewSet(viewsets.ModelViewSet):
     serializer_class = RoadReportSerializer
 
 
-#관리자 회원가입 API
+# 관리자 회원가입 API
 class MasterSignUp(APIView):
     def post(self, request):
         serializer = MasterSerializer(data=request.data)
@@ -49,7 +65,8 @@ class MasterSignUp(APIView):
             return Response({'message': '관리자 등록 성공'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-#관리자 로그인 API
+
+# 관리자 로그인 API
 class MasterLogin(APIView):
     def post(self, request):
         master_id = request.data.get('master_id')
@@ -64,7 +81,8 @@ class MasterLogin(APIView):
         except Master.DoesNotExist:
             return Response({'error': '관리자 계정이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-#사용자 회원가입 API
+
+# 사용자 회원가입 API
 class UserSignUp(APIView):
     def post(self, request):
         serializer = UsersSerializer(data=request.data)
@@ -73,7 +91,8 @@ class UserSignUp(APIView):
             return Response({'message': '회원가입 성공'}, status=status.HTTP_201_CREATED)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-#사용자 로그인 API
+
+# 사용자 로그인 API
 class UserLogin(APIView):
     def get(self, request):
         user_id = request.data.get('user_id')
@@ -88,125 +107,310 @@ class UserLogin(APIView):
         except Users.DoesNotExist:
             return Response({'error': '사용자 계정이 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
-#사용자 로그아웃 API
+
+# 사용자 로그아웃 API
 class UserSignOut(APIView):
     def post(self, request):
         return Response({'message': '로그아웃 성공'}, status=status.HTTP_200_OK)
 
-#사용자 정보 조회 API
+
+# 사용자 정보 조회 API
 class UserInfo(APIView):
-    def get(self, request, user_id):
+    def get(self, request, user_id):  # URL 패턴에서 user_id를 받음
         user = get_object_or_404(Users, user_id=user_id)
         serializer = UsersSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-#도로 보고 전체 조회 API
+# 사용자 정보 수정 API
+class UserUpdate(APIView):
+    def put(self, request, user_id):
+        user = get_object_or_404(Users, user_id=user_id)
+        
+        data = request.data
+
+        # 수정 가능한 필드만 업데이트
+        if 'user_name' in data:
+            user.user_name = data['user_name']
+        if 'user_age' in data:
+            user.user_age = data['user_age']
+        if 'user_phonenumber' in data:
+            user.user_phonenumber = data['user_phonenumber']
+
+        user.save()
+        return Response({'message': '사용자 정보 수정 완료'}, status=status.HTTP_200_OK)
+# 사용자 비밀번호 수정 API
+class UserPasswordChange(APIView):
+    def put(self, request, user_id):
+        user = get_object_or_404(Users, user_id=user_id)
+        
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not current_password or not new_password:
+            return Response({'error': '현재 비밀번호와 새 비밀번호를 입력하세요.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not check_password(current_password, user.user_pw):
+            return Response({'error': '현재 비밀번호가 일치하지 않습니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        user.user_pw = make_password(new_password)
+        user.save()
+
+        return Response({'message': '비밀번호 변경 완료'}, status=status.HTTP_200_OK)
+
+# 도로 보고 전체 조회 API
 class RoadReportAll(APIView):
     def get(self, request):
-        reports = RoadReport.objects.all()
+        reports = RoadReport.objects.exclude(roadreport_image__isnull=True).exclude(roadreport_image__exact="")
         serializer = RoadReportSerializer(reports, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-#특정 도로 보고 조회 API
-#class RoadReportSelect(APIView):
- #   def get(self, request, roadreport_id):
-  #      report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
-   #     serializer = RoadReportSerializer(report)
-    #
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+
+# 특정 도로 보고 조회 API
+# class RoadReportSelect(APIView):
+#   def get(self, request, roadreport_latlng):
+#      report = get_object_or_404(RoadReport, roadreport_latlng=roadreport_latlng)
+#     serializer = RoadReportSerializer(report)
+#
+#     return Response(serializer.data, status=status.HTTP_200_OK)
 class RoadReportSelect(APIView):
-    def get(self, request, roadreport_id):
-        # roadreport_id가 정확히 일치하는 데이터 조회
-        report = RoadReport.objects.filter(roadreport_id=roadreport_id).first()
+    def get(self, request, roadreport_num):
+        # roadreport_num이이 정확히 일치하는 데이터 조회
+        report = RoadReport.objects.filter(roadreport_num=roadreport_num).first()
 
         if not report:
-            return Response({'error': '해당 roadreport_id가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': '해당 roadreport_num가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = RoadReportSerializer(report)
-        return Response(serializer.data, status=status.HTTP_200_OK)    
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-#도로 보고 삭제 API
+    # 도로 보고 삭제 API
 class RoadReportDelete(APIView):
-    def delete(self, request, roadreport_id):
-        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
+    def delete(self, request, roadreport_num):
+        report = get_object_or_404(RoadReport, roadreport_num=roadreport_num)
         report.delete()
         return Response({'message': '도로 보고 삭제 완료'}, status=status.HTTP_204_NO_CONTENT)
 
-#도로 보고 수정 API
+
+# 도로 보고 수정 API
+"""
 class RoadReportEdit(APIView):
-    def put(self, request, roadreport_id):
-        report = get_object_or_404(RoadReport, roadreport_id=roadreport_id)
+    def put(self, request, roadreport_num):
+        report = get_object_or_404(RoadReport, roadreport_num=roadreport_num)
         serializer = RoadReportSerializer(report, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({'message': '도로 보고 수정 완료'}, status=status.HTTP_200_OK)
         return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+"""
+class RoadReportEdit(APIView):
+    def put(self, request, roadreport_num):
+        report = get_object_or_404(RoadReport, roadreport_num=roadreport_num)
+        
+        # 요청 데이터에서 roadreport_status만 받음
+        roadreport_status = request.data.get('roadreport_status')
+        
+        if roadreport_status not in ['접수됨', '처리중', '해결됨', '보류중']:
+            return Response({'error': '유효하지 않은 상태입니다.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 상태만 수정
+        report.roadreport_status = roadreport_status
+        report.save()
+        
+        return Response({'message': '도로 보고 상태 수정 완료'}, status=status.HTTP_200_OK)
+# YOLOv8 모델 로딩 함수
+def load_yolo_model():
+    print("[INFO] YOLO 모델 로드 중 (force reload)")
+    return YOLO("C:/Users/ysyhs/Desktop/jolup/models/yoloV8v3.pt")
 
-#하드웨어 데이터 요청 API
 class HardwarePull(APIView):
     def post(self, request):
         try:
-            data = request.data
+            print("[INFO] 요청 수신됨. 모델 로드 시작.")
+            model = load_yolo_model()
+            print("[INFO] 모델 로딩 완료.")
 
-            kst_time = data.get("kst_time")
-            lat_lon = data.get("lat_lon")
-            speed = data.get("speed")
-            course = data.get("course")
+            # 시간 및 파일명 설정
+            kst = pytz.timezone('Asia/Seoul')
+            kst_time = datetime.now(kst)
+            filename = kst_time.strftime('%Y%m%d_%H%M%S') + '.jpg'
 
-            
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'reports')
+            os.makedirs(save_dir, exist_ok=True)
+            save_path = os.path.join(save_dir, filename)
 
-            roadreport_time = datetime.strptime(kst_time, "%Y-%m-%d %H:%M:%S").replace(tzinfo=pytz.UTC)
+            # 영상 캡처
+            #cap = cv2.VideoCapture("http://192.168.0.135:8081/")
+            cap = cv2.VideoCapture("http://192.168.66.194:8081/")
+            print(f"[DEBUG] VideoCapture opened: {cap.isOpened()}")
+            ret, frame = cap.read()
+            cap.release()
 
-            # `roadreport_num`을 직접 할당하지 않음 → 자동 증가
-            new_report = RoadReport.objects.create(
-                roadreport_id=lat_lon,
-                roadreport_time=roadreport_time,
+            if not ret or frame is None:
+                return Response({"error": "카메라 캡처 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # 요청 데이터
+            lat_lon = request.data.get("lat_lon", "")
+            speed = request.data.get("speed", None)
+            direction = request.data.get("course", None)
+
+            try:
+                curr_lat, curr_lon = map(float, lat_lon.split(','))
+            except:
+                return Response({"error": "잘못된 좌표 형식"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 최근 보고된 이미지 좌표 비교
+            latest = RoadReport.objects.filter(roadreport_image__isnull=False).order_by('-roadreport_time').first()
+            if latest and latest.roadreport_latlng:
+                try:
+                    prev_lat, prev_lon = map(float, latest.roadreport_latlng.split(','))
+                    if abs(curr_lat - prev_lat) < 0.00005 and abs(curr_lon - prev_lon) < 0.00006:
+                        print("[INFO] 최근 위치와 유사 → 저장 생략")
+                        return Response({"message": "중복 위치로 이미지 저장 생략"}, status=status.HTTP_200_OK)
+                except:
+                    pass
+
+            # 객체 탐지
+            results = model.predict(frame, conf=0.3)[0]
+            detections = results.boxes
+            print(f"[INFO] 감지된 객체 수: {len(detections)}")
+
+            image_path = None
+            detected_types = set()
+
+            if detections is not None and detections.xyxy.shape[0] > 0:
+                for xyxy, conf, cls in zip(detections.xyxy, detections.conf, detections.cls):
+                    if conf < 0.5:
+                        continue
+                    class_name = model.names[int(cls)].lower()
+                    if class_name in ["crack", "pothole"]:
+                        detected_types.add(class_name)
+                        x1, y1, x2, y2 = map(int, xyxy)
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                        cv2.putText(frame, class_name, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+                        image_path = os.path.join('reports', filename)
+
+            # 이미지 저장
+            if image_path:
+                cv2.imwrite(save_path, frame)
+                print(f"[INFO] 이미지 저장됨: {save_path}")
+
+            damage_str = ", ".join(sorted(detected_types)) if detected_types else None
+
+            # DB 저장
+            RoadReport.objects.create(
+                roadreport_time=kst_time,
+                roadreport_image=image_path,
+                roadreport_latlng=lat_lon,
                 roadreport_speed=speed,
-                roadreport_direction=course
+                roadreport_direction=direction,
+                roadreport_damagetype=damage_str
             )
+            print("[INFO] DB 저장 완료.")
 
-            return Response({
-                "message": "하드웨어 데이터 저장 완료!",
-                "report_id": new_report.roadreport_id,
-                "num": new_report.roadreport_num
-            }, status=status.HTTP_201_CREATED)
+            if image_path:
+                return Response({"message": "감지됨, 이미지 저장 완료", "file": filename}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message": "감지 안됨, 정보만 저장됨"}, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            print(f"[ERROR] 예외 발생: {str(e)}")
+            return Response({"error": f"오류 발생: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-#AI 데이터 요청 API
+        
+
+def object_detection_stream(request):
+    #stream_url = "http://192.168.0.135:8081/"
+    stream_url = "http://192.168.66.194:8081/"
+    model = load_yolo_model()
+    names = model.model.names  # YOLOv8 클래스 이름 접근
+
+    def generate_frames():
+        cap = cv2.VideoCapture(stream_url)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+        if not cap.isOpened():
+            print("[ERROR] 스트림 열기 실패")
+            return
+
+        frame_count = 0
+        detections = []
+
+        while True:
+            ret, frame = cap.read()
+            if not ret or frame is None:
+                time.sleep(0.2)
+                continue
+
+            frame_count += 1
+
+            # YOLO 추론 (3프레임마다, 로그 숨김)
+            if frame_count % 3 == 0:
+                results = model.predict(source=frame, conf=0.3, verbose=False)[0]
+                detections = results.boxes.data.cpu().numpy().tolist()
+
+            # 감지된 객체 표시
+            if detections:
+                for *xyxy, conf, cls in detections:
+                    if len(xyxy) != 4 or conf < 0.3:
+                        continue
+                    x1, y1, x2, y2 = map(int, xyxy)
+                    class_name = names[int(cls)]
+                    label = f"{class_name} {conf:.2f}"
+
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX,
+                                0.6, (0, 255, 0), 2)
+
+            _, jpeg = cv2.imencode('.jpg', frame)
+            if jpeg is None:
+                continue
+
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
+
+        cap.release()
+
+    return StreamingHttpResponse(generate_frames(), content_type='multipart/x-mixed-replace; boundary=frame')
+
+
+
+
+
+# AI 데이터 요청 API
 class AiPull(APIView):
     def get(self, request):
         return Response({'message': 'AI 데이터 조회'}, status=status.HTTP_200_OK)
 
-#도로 보고 이미지 업로드 API
+
+# 도로 보고 이미지 업로드 API
 class RoadReportImageUpload(APIView):
     def post(self, request, report_id):
-        report = get_object_or_404(RoadReport, roadreport_id=report_id)
+        report = get_object_or_404(RoadReport, roadreport_latlng=report_id)
         if 'roadreport_image' in request.FILES:
             report.roadreport_image = request.FILES['roadreport_image']
             report.save()
             return Response({'message': '이미지 업로드 성공'}, status=status.HTTP_200_OK)
         return Response({'error': '파일이 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
-#위도 경도 분리시키는 api
+
+# 위도 경도 분리시키는 api
 class RoadReportSelectWithCoords(APIView):
     def get(self, request, report_id):
         """ 도로 보고 데이터를 가져올 때 위도/경도를 분리하여 응답 """
         try:
-            report = get_object_or_404(RoadReport, roadreport_id=report_id)
+            report = get_object_or_404(RoadReport, roadreport_latlng=report_id)
 
-            # 예외 처리: roadreport_id가 None이거나 올바른 형식이 아닌 경우
-            if not report.roadreport_id or ',' not in report.roadreport_id:
+            # 예외 처리: roadreport_latlng가 None이거나 올바른 형식이 아닌 경우
+            if not report.roadreport_latlng or ',' not in report.roadreport_latlng:
                 return Response({'error': '잘못된 위치 데이터입니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
             try:
-                latitude, longitude = map(float, report.roadreport_id.split(','))  # 실수형 변환
+                latitude, longitude = map(float, report.roadreport_latlng.split(','))  # 실수형 변환
             except ValueError:
                 return Response({'error': '위도/경도 값이 올바르지 않습니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
             return Response({
-                'roadreport_id': report.roadreport_id,
+                'roadreport_latlng': report.roadreport_latlng,
                 'latitude': latitude,
                 'longitude': longitude,
                 'roadreport_damagetype': report.roadreport_damagetype,
@@ -219,44 +423,72 @@ class RoadReportSelectWithCoords(APIView):
             return Response({'error': '도로 보고 데이터가 존재하지 않습니다.'}, status=status.HTTP_404_NOT_FOUND)
 
 
+# naver 지도 관련련
+class NaverMapProxy(APIView):
+    def get(self, request):
+        start = request.query_params.get('start')  
+        goal = request.query_params.get('goal')    
 
-def object_detection_stream(request):
-    stream_url = "http://192.168.0.135:8081/" # 실제 Motion 스트리밍 URL로 변경
+        if not start or not goal:
+            return Response({'error': 'start와 goal 파라미터가 필요합니다.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def video_frame_generator():
-        video_capture = cv2.VideoCapture(stream_url)
-        if not video_capture.isOpened():
-            raise Exception("스트리밍 URL에 연결할 수 없습니다.")
+        
+        url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving"
 
-        # 객체 인식 모델 로드 (Haar Cascade 또는 DNN)
-        # 예시: Haar Cascade 얼굴 인식 모델 로드
-        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        headers = {
+            'X-NCP-APIGW-API-KEY-ID': os.environ.get('NAVER_API_KEY_ID'),
+            'X-NCP-APIGW-API-KEY': os.environ.get('NAVER_API_KEY'),
+        }
 
+        params = {
+            'start': start,
+            'goal': goal,
+            'option': 'trafast'  
+        }
 
         try:
-            while True:
-                ret, frame = video_capture.read()
-                if not ret:
-                    break # 스트림 종료 또는 오류 발생
+            naver_response = requests.get(url, headers=headers, params=params)
+            return Response(naver_response.json(), status=naver_response.status_code)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
 
-                # 객체 인식 수행 -> 이 부분은 나중에 얼굴인식이 아닌 우리껄로 수정해야 하는 부분
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                faces = face_cascade.detectMultiScale(gray, 1.1, 4) # 얼굴 검출
 
-                # 검출된 객체에 사각형 그리기 (예시: 얼굴)
-                for (x, y, w, h) in faces:
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) # 초록색 사각형
+class RoadReportCreate(APIView):
+    def post(self, request):
+        data = request.data
+        report = RoadReport.objects.create(
+            roadreport_time=data['roadreport_time'],
+            roadreport_image=data['roadreport_image'],
+            roadreport_latlng=data['roadreport_latlng'],
+            roadreport_speed=data['roadreport_speed'],
+            roadreport_direction=data['roadreport_direction'],
+        )
+        return Response({"message": "성공"}, status=201)
 
-                # 객체 인식 결과 프레임 (MJPEG 형식으로 인코딩)
-                _, jpeg_frame = cv2.imencode('.jpg', frame)
-                byte_frame = jpeg_frame.tobytes()
 
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + byte_frame + b'\r\n')
-                time.sleep(0.1) # 프레임 처리 속도 조절 (선택 사항)
+class NaverLocalSearch(APIView):
+    def get(self, request):
+        query = request.query_params.get('query')
+        if not query:
+            return Response({'error': '검색어(query)는 필수입니다.'}, status=400)
 
-        finally:
-            video_capture.release() # VideoCapture 객체 해제
+        url = "https://openapi.naver.com/v1/search/local.json"
+        headers = {
+            "X-Naver-Client-Id": os.environ.get("NAVER_CLIENT_ID"),
+            "X-Naver-Client-Secret": os.environ.get("NAVER_CLIENT_SECRET"),
+        }
+        params = {
+            "query": query,
+            "display": 5,
+            "start": 1,
+            "sort": "random"
+        }
+        
 
-    return StreamingHttpResponse(video_frame_generator(), content_type='multipart/x-mixed-replace; boundary=frame')
+        try:
+            r = requests.get(url, headers=headers, params=params)
+            return Response(r.json(), status=r.status_code)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
 

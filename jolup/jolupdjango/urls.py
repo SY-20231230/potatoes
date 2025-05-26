@@ -19,13 +19,14 @@ from django.urls import path, include
 from jolupapp.views import object_detection_stream
 from django.conf import settings
 from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('object_detection_stream/', object_detection_stream, name='object_detection_stream'),
     path('', include('jolupapp.urls')),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #MEDIA URL 추가 (이미지 업로드 지원)
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+#if settings.DEBUG:
+ #   urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     

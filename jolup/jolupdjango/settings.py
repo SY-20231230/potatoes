@@ -13,8 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import pymysql
 import os
+from dotenv import load_dotenv
 pymysql.install_as_MySQLdb()  # pymysql 사용 시 추가
-
+load_dotenv()
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'jolupapp',
     'corsheaders',  # CORS 설정 추가
     'rest_framework',
+    
 ]
 
 
@@ -65,14 +68,20 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # CORS 미들웨어 추가
 ]
 # CORS 설정 (React의 도메인 허용)
-CORS_ALLOW_ALL_ORIGINS = True 
-#CORS_ALLOWED_ORIGINS = [
-#    "http://localhost:3000",  # React 개발 서버 주소
- #   "http://127.0.0.1:8000",
-  #  "http://localhost:8000",
-   # "http://192.168.0.162:3000"
+CORS_ALLOW_ALL_ORIGINS = False 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # React 개발 서버 주소
+    "http://127.0.0.1:8000",
+    "url",
+    "http://192.168.0.162:3000",
+    "https://615d-14-42-86-124.ngrok-free.app",
+    "https://naveropenapi.apigw.ntruss.com"  
     
-#]
+]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'ngrok-skip-browser-warning',
+]
+
 CORS_ALLOW_CREDENTIALS = True
 # Django REST Framework 기본 설정
 REST_FRAMEWORK = {
