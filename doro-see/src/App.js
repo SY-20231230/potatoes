@@ -1,9 +1,9 @@
 import AdminData from "./pages/admin/AdminData.js";
 import AdminManage from "./pages/admin/AdminManage.js";
-import UserProfile from "./pages/UserProfile.js";
+import UserProfile from "./pages/users/UserProfile.js";
 import Direction from "./pages/navi/Direction";
 
-const user_id = sessionStorage.getItem(`user_id`);
+const user_id = sessionStorage.getItem(`user_id`)
 console.log("user_id", user_id);
 
 const App = [

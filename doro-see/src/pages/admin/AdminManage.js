@@ -3,6 +3,7 @@ import {Card, Table, Container, Row, Col, Dropdown} from "react-bootstrap";
 import {useLocation} from "react-router-dom";
 
 function AdminManage() {
+    const url = "http://192.168.0.146:8000";
     const location = useLocation();
     const receivedData = location.state?.fetchedData || [];
 
@@ -128,7 +129,7 @@ function AdminManage() {
 
     async function updateState(roadreport_num, state) {
         try {
-            const response = await fetch(`http://localhost:8000/roadreport/edit/${roadreport_num}/`, {
+            const response = await fetch(`${url}/roadreport/edit/${roadreport_num}/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -159,7 +160,7 @@ function AdminManage() {
 
     async function deleteRoadData(roadreport_num) {
         try {
-            const response = await fetch(`http://localhost:8000/roadreport/delete/${roadreport_num}/`, {
+            const response = await fetch(`${url}/roadreport/delete/${roadreport_num}/`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ function AdminManage() {
     // API 재호출
     const fetchUpdatedData = async () => {
         try {
-            const response = await fetch('http://localhost:8000/roadreport/all');
+            const response = await fetch(`${url}/roadreport/all`);
             if (response.ok) {
                 const data = await response.json();
                 return processRoadData(data);
@@ -330,7 +331,7 @@ function AdminManage() {
                                                 <td className="id">위도: {road.lat}<br/>경도: {road.lng}</td>
                                                 <td className="image">
                                                     <img
-                                                        src={`http://localhost:8000${road.roadreport_image}`}
+                                                        src={`${url}${road.roadreport_image}`}
                                                         onError={(e) => {
                                                             e.target.onerror = null;
                                                             e.target.src = 'http://localhost:3000/media/default-fallback-image.png';
@@ -340,7 +341,7 @@ function AdminManage() {
                                                         }}
                                                         alt={`img${startIndex + index}`}
                                                         className="clickable-image"
-                                                        onClick={() => openImageModal(`http://localhost:8000/${road.roadreport_image}`)}
+                                                        onClick={() => openImageModal(`${url}/${road.roadreport_image}`)}
                                                     />
                                                 </td>
                                                 <td className="damage_type">{road.roadreport_damagetype}</td>
