@@ -3,6 +3,7 @@ import React, {useState, useRef, useEffect} from "react";
 import NaviButton from "./NaviButton";
 
 const SearchPlaceBar = () => {
+    const url = "http://192.168.0.146:8000";
     const [inputStart, setInputStart] = useState("");
     const [inputGoal, setGoalInput] = useState("");
     const [searchPlace, setPlaceData] = useState([]);
@@ -24,7 +25,7 @@ const SearchPlaceBar = () => {
     const enterPlace = async (e) => {
         if (e.key === "Enter" && inputStart !== "") {
             try {
-                const response = await fetch(`http://localhost:8000/naver/search/?query=${inputStart}`, {
+                const response = await fetch(`${url}/naver/search/?query=${inputStart}`, {
                     method: "GET",
                 });
 
@@ -45,7 +46,7 @@ const SearchPlaceBar = () => {
     const searchGoal = async (e) => {
         if (e.key === "Enter" && inputGoal !== "") {
             try {
-                const response = await fetch(`http://localhost:8000/naver/search/?query=${inputGoal}`, {
+                const response = await fetch(`${url}/naver/search/?query=${inputGoal}`, {
                     method: "GET",
                 });
 

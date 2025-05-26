@@ -48,8 +48,21 @@
 
 .map-container {
     width: 100%;
-    height: 91vh;
+    height: 91.5vh;
     max-height: 100vh;
+}
+
+.guide_content {
+    position: absolute;
+    top: 8.8%;
+    width: 20%;
+    height: 91%;
+    overflow-y: scroll;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    z-index: 1000;
 }
 
 .places-buttons .btn {
@@ -86,6 +99,22 @@
 .dropdown-menu > li > a:focus {
     opacity: 1;
 }
+
+
+@media (max-width: 700px) {
+    #map {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 89vh;
+        max-height: 100vh;
+    }
+}
+
 
 @media (min-width: 992px) {
     .typo-line {

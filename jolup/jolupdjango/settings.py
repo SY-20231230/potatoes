@@ -72,7 +72,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # React 개발 서버 주소
     "http://127.0.0.1:8000",
-    "http://localhost:8000",
+    "url",
     "http://192.168.0.162:3000",
     "https://615d-14-42-86-124.ngrok-free.app",
     "https://naveropenapi.apigw.ntruss.com"  

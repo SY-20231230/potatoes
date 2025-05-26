@@ -1,5 +1,5 @@
 import React from "react";
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import {Container, Dropdown} from "react-bootstrap";
 import routes from "../../App.js";
 import SearchPlaceBar from "../SearchPlaceBar";
@@ -42,7 +42,12 @@ function Header() {
                         &emsp;
 
                         {/* 프로필 드롭다운 */}
-                        {showUserData && (
+                        {showUserData === null ? (
+                            <div>
+                                <Link to={`/dorosee/user/login`}>로그인</Link>
+
+                            </div>
+                        ) : (
                             <Dropdown align="end" className="text-end">
                                 <Dropdown.Toggle variant="link"
                                                  className="d-block link-body-emphasis text-decoration-none p-0 border-0">
@@ -58,11 +63,6 @@ function Header() {
                                     <Dropdown.Item href="#">Sign out</Dropdown.Item>
                                 </Dropdown.Menu>
                             </Dropdown>
-                        )}
-                        {showUserData === null && (
-                            <div>
-                                로그인
-                            </div>
                         )}
 
                     </div>

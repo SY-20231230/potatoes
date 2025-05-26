@@ -1,8 +1,9 @@
 import React from "react";
-import {useLocation, useNavigate, NavLink} from "react-router-dom";
+import {useLocation, useNavigate, NavLink, Link} from "react-router-dom";
 import {Nav} from "react-bootstrap";
 
 function Sidebar({color, image, routes}) {
+    const url = "http://192.168.0.146:8000";
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -19,11 +20,11 @@ function Sidebar({color, image, routes}) {
             />
             <div className="sidebar-wrapper">
                 <div className="logo d-flex align-items-center justify-content-center">
-                    <a href="/dorosee/loader" className="simple-text logo-mini mx-1">
+                    <Link to={`/dorosee/loader`} className="simple-text logo-mini mx-1">
                         <div className="logo-img d-flex align-items-center justify-content-center w-100">
                             Doro-See
                         </div>
-                    </a>
+                    </Link>
                 </div>
 
                 <Nav>
@@ -44,7 +45,7 @@ function Sidebar({color, image, routes}) {
                                         onClick={async (e) => {
                                             e.preventDefault();
                                             try {
-                                                const response = await fetch(`http://localhost:8000/${prop.endpoint}`, {
+                                                const response = await fetch(`${url}/${prop.endpoint}`, {
                                                     method: "GET",
                                                     headers: {
                                                         'Content-Type': 'application/json',

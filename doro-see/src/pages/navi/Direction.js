@@ -9,8 +9,8 @@ function Direction() {
 
     const location = useLocation();
     const [map, setMap] = useState(null);
-    const road_navi = location.state?.fetchedData?.route?.trafast?.[0]?.path || [];
 
+    const road_navi = location.state?.fetchedData?.route?.trafast?.[0]?.path || [];
 
     const start = location.state?.fetchedData?.route?.trafast?.[0]?.path?.[0] || [];
     const goal = location.state?.fetchedData?.route?.trafast?.[0]?.path?.[road_navi.length - 1] || [];
@@ -38,6 +38,8 @@ function Direction() {
             console.warn("지도 아직 로드 안됨");
             return;
         }
+        stopFollowingLocation();
+        console.log("위치 연동 인터벌 종료");
 
         try {
             const pointIndex = guide.pointIndex;
@@ -45,12 +47,43 @@ function Direction() {
             const latlng = new naver.maps.LatLng(point[1], point[0]);
             map.setCenter(latlng);
             map.setZoom(17);
-            console.log("중심 이동 위치:", latlng.toString());
+            // console.log("중심 이동 위치:", latlng.toString());
         } catch (err) {
             console.error("지도 중심 이동 오류:", err);
         }
     };
 
+
+    let followLocation = null;
+    let isDrag = false;
+    let locationMarker = null;
+
+    function startFollowingLocation() {
+        if (followLocation) return;
+
+        followLocation = setInterval(() => {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                if (!mapInstance.current) return;
+
+                const updatedLocation = new naver.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                if (!isDrag) {
+                    mapInstance.current.setCenter(updatedLocation);
+                    console.log("위치 연동 인터벌 작동중");
+
+                    if (locationMarker) {
+                        locationMarker.setPosition(updatedLocation);
+                    }
+                }
+            });
+        }, 1000);
+    }
+
+    function stopFollowingLocation() {
+        if (followLocation) {
+            clearInterval(followLocation);
+            followLocation = null;
+        }
+    }
 
     useEffect(() => {
         if (!window.naver) return;
@@ -84,13 +117,13 @@ function Direction() {
         }
 
         function onSuccessGeolocation(position) {
+            if (!mapInstance.current) return;
+
             const location = new naver.maps.LatLng(position.coords.latitude, position.coords.longitude);
             map.setCenter(location);
-            map.setZoom(15);
-            // console.log("onSuccessGeolocation:", location);
 
             // 위치 마커 추가
-            new naver.maps.Marker({
+            locationMarker = new naver.maps.Marker({
                 position: location,
                 map,
                 icon: {
@@ -105,27 +138,41 @@ function Direction() {
                 '<img src="/media/icon_gps.png" style="background-color: #FFFFFF; padding: 0.5vh; cursor: pointer; border: 1px solid #E81E24; border-radius: 0.5vh">';
 
             naver.maps.Event.once(map, "init", function () {
-                const customControl = new naver.maps.CustomControl(locationBtnHtml, {
+                const locationBtn = new naver.maps.CustomControl(locationBtnHtml, {
                     position: naver.maps.Position.RIGHT_CENTER,
                 });
 
-                customControl.setMap(map);
+                locationBtn.setMap(map);
 
                 naver.maps.Event.addDOMListener(
-                    customControl.getElement(),
+                    locationBtn.getElement(),
                     "click",
                     function () {
-                        map.setCenter(new naver.maps.LatLng(position.coords.latitude, position.coords.longitude));
+                        navigator.geolocation.getCurrentPosition((pos) => {
+                            const updatedLocation = new naver.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+                            map.setCenter(updatedLocation);
+                            if (locationMarker) {
+                                locationMarker.setPosition(updatedLocation);
+                            }
+
+                            isDrag = false;
+                            startFollowingLocation();
+                        });
                     }
                 );
-
             });
 
+            naver.maps.Event.addListener(map, 'dragstart', function () {
+                isDrag = true;
+                stopFollowingLocation();
+                console.log("위치 연동 인터벌 종료");
+            });
         }
 
         function onErrorGeolocation() {
             console.error("Geolocation을 가져올 수 없습니다.");
         }
+
 
     }, []);
 
@@ -151,23 +198,19 @@ function Direction() {
             strokeWeight: 4,
         });
 
-        map.setCenter(start);
+        map.setCenter(new naver.maps.LatLng(start[1], start[0]));
         map.setZoom(16);
 
         startMarkerInstance.current = new naver.maps.Marker({
             map,
             position: new naver.maps.LatLng(start[1], start[0]),
-            icon: {
-                url: "/media/icon_location.png",
-            },
+            icon: {url: "/media/icon_location.png"},
         });
 
         goalMarkerInstance.current = new naver.maps.Marker({
             map,
             position: new naver.maps.LatLng(goal[1], goal[0]),
-            icon: {
-                url: "/media/icon_location_goal.png",
-            },
+            icon: {url: "/media/icon_location_goal.png"},
         });
 
         guideMarkerInstance.current.forEach(marker => marker.setMap(null));
@@ -186,14 +229,28 @@ function Direction() {
                     origin: new naver.maps.Point(0, 0),
                     anchor: new naver.maps.Point(8, 8),
                 },
-
                 title: guideItem.instructions,
             });
 
             guideMarkerInstance.current.push(marker);
         });
 
+        // 위치 연동 인터벌 시작
+        if (navigator.geolocation) {
+            startFollowingLocation();
+
+            naver.maps.Event.addListener(map, 'dragstart', function () {
+                isDrag = true;
+                stopFollowingLocation();
+                console.log("위치 연동 인터벌 종료");
+            });
+        }
+
+        return () => {
+            stopFollowingLocation();
+        };
     }, [map, road_navi]);
+
 
     const formatTime = (date) => {
         return date.toTimeString().slice(0, 5);
@@ -206,18 +263,7 @@ function Direction() {
             </div>
             <div>
                 {guide.length > 0 && (
-                    <div style={{
-                        position: "absolute",
-                        top: "8.8%",
-                        width: "20%",
-                        height: "91%",
-                        overflowY: "scroll",
-                        border: "1px solid #ccc",
-                        padding: "10px",
-                        borderRadius: "8px",
-                        backgroundColor: "#f9f9f9",
-                        zIndex: "1000"
-                    }}>
+                    <div className={`guide_content`}>
                         <div style={{fontWeight: "bold"}}>
                             <span>도착 예정시간: {formatTime(new Date(new Date(departureTime).getTime() + duration))}</span><br/>
                             <span>총 거리: {(distance > 1000) ? (distance / 1000).toFixed(1) + 'km' : Math.round(distance / 10) + `0m`}</span><br/>

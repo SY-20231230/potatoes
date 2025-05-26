@@ -61,9 +61,9 @@ function AdminData() {
     // 포트홀과 크랙이 동시에 있는 경우 포트홀로 분류함
 
     const potholeCount = monthData.filter(
-        (road => road.roadreport_damagetype.includes("pothole"))).length;
+        (road => (road.roadreport_damagetype.includes("pothole") && road.roadreport_status !== "해결됨"))).length;
     const crackCount = monthData.filter(
-        (road => road.roadreport_damagetype === "crack")).length;
+        (road => (road.roadreport_damagetype === "crack" && road.roadreport_status !== "해결됨"))).length;
     const solvedCount = monthData.filter(
         (road => road.roadreport_status === "해결됨")).length;
 
@@ -145,7 +145,7 @@ function AdminData() {
 
     }, [filteredData]);
 
-    
+
     // 좌표로 지역 분류하기 (미구현됨)
     const classifyRegion = () => {
         naver.maps.Service.reverseGeocode({
@@ -186,7 +186,7 @@ function AdminData() {
                                         <div className="numbers">
                                             <p className="card-title">접수됨</p>
                                             <Card.Text
-                                                className={`card-perData`}>{filteredData.filter(road => ["접수됨", null].includes(road.roadreport_status)).length}건</Card.Text>
+                                                className={`card-perData`}>{filteredData.filter(road => road.roadreport_status === "접수됨").length}건</Card.Text>
                                         </div>
                                     </Col>
                                 </Row>
@@ -246,7 +246,7 @@ function AdminData() {
                                         <div className="numbers">
                                             <p className="card-title">미분류</p>
                                             <Card.Text
-                                                className={`card-perData`}>{filteredData.filter(road => !["접수됨", "처리중", "해결됨", "보류중", null].includes(road.roadreport_status)).length}건</Card.Text>
+                                                className={`card-perData`}>{filteredData.filter(road => !["접수됨", "처리중", "해결됨", "보류중"].includes(road.roadreport_status)).length}건</Card.Text>
                                         </div>
                                     </Col>
                                 </Row>
@@ -266,6 +266,7 @@ function AdminData() {
                         <Card>
                             <Card.Header>
                                 <Card.Title as="h4">월간 통계 <span
+                                    style={{fontWeight: "bold"}}>{potholeCount + crackCount + solvedCount}건</span> <span
                                     style={{fontSize: "14px"}}>({roadMonth} 이후)</span></Card.Title>
                             </Card.Header>
                             <Card.Body>
