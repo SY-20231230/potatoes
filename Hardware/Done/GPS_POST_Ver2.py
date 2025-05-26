@@ -9,14 +9,38 @@ import pytz
 import requests
 import json
 import time
+import subprocess
+import os
 
 # 시리얼 포트 설정
 serial_port = "/dev/ttyACM0"
 baud_rate = 115200
 
-# Django 서버 주소
-django_server_url = "http://192.168.0.157:8000/hardware/pull/"
+max_retry = 10  # 최대 재시도 횟수
+retry_delay = 10  # 재시도 간격 (초)
 
+def get_current_ssid():
+    try:
+        ssid = subprocess.check_output(["iwgetid", "-r"]).decode().strip()
+        return ssid
+    except subprocess.CalledProcessError:
+        return None
+
+# 현재 접속한 SSID 확인
+current_ssid = get_current_ssid()
+
+# SSID에 따라 URL 설정
+if current_ssid == "JH_hotspot":
+    django_server_url = "http://192.168.66.236:8000/hardware/pull/"  # 지훈씨 핫스팟
+elif current_ssid == "CCIT_2023_5G":
+    django_server_url = "http://192.168.0.146:8000/hardware/pull/"   # CCIT 와이파이
+elif current_ssid == "CCIT_2023":
+    django_server_url = "http://192.168.0.146:8000/hardware/pull/"   # CCIT 와이파이
+else:
+    print("[ERROR] 네트워크에 연결되지 않았습니다. 10초 후 라즈베리파이를 재부팅합니다.")
+    time.sleep(10)
+
+    
 try:
     ser = serial.Serial(serial_port, baud_rate, timeout=3)
     print(f"Serial port {serial_port} opened successfully")
