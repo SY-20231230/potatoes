@@ -22,6 +22,7 @@ import numpy as np
 from pathlib import Path
 from ultralytics import YOLO
 from functools import lru_cache
+from math import radians, cos, sin, asin, sqrt
 import pathlib #이 세줄이 욜로 리눅스 문제일때때
 temp = pathlib.PosixPath 
 pathlib.PosixPath = pathlib.WindowsPath
@@ -220,8 +221,16 @@ class RoadReportEdit(APIView):
 # YOLOv8 모델 로딩 함수
 def load_yolo_model():
     print("[INFO] YOLO 모델 로드 중 (force reload)")
-    return YOLO("C:/Users/ysyhs/Desktop/jolup/models/yoloV8v3.pt")
+    return YOLO("C:/Users/ysyhs/Desktop/jolup/models/yoloV8v5.pt")
 
+# ✅ Haversine 거리 계산 함수 (반경 5m 이내 판별용)
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371000  # 지구 반지름(m)
+    dlat = radians(lat2 - lat1)
+    dlon = radians(lon2 - lon1)
+    a = sin(dlat/2)**2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon/2)**2
+    return R * 2 * asin(sqrt(a))
+"""
 class HardwarePull(APIView):
     def post(self, request):
         try:
@@ -239,8 +248,8 @@ class HardwarePull(APIView):
             save_path = os.path.join(save_dir, filename)
 
             # 영상 캡처
-            #cap = cv2.VideoCapture("http://192.168.0.135:8081/")
-            cap = cv2.VideoCapture("http://192.168.66.194:8081/")
+            cap = cv2.VideoCapture("http://192.168.0.135:8081/")
+            #cap = cv2.VideoCapture("http://192.168.66.194:8081/")
             print(f"[DEBUG] VideoCapture opened: {cap.isOpened()}")
             ret, frame = cap.read()
             cap.release()
@@ -279,7 +288,7 @@ class HardwarePull(APIView):
 
             if detections is not None and detections.xyxy.shape[0] > 0:
                 for xyxy, conf, cls in zip(detections.xyxy, detections.conf, detections.cls):
-                    if conf < 0.5:
+                    if conf < 0.67:
                         continue
                     class_name = model.names[int(cls)].lower()
                     if class_name in ["crack", "pothole"]:
@@ -315,12 +324,132 @@ class HardwarePull(APIView):
         except Exception as e:
             print(f"[ERROR] 예외 발생: {str(e)}")
             return Response({"error": f"오류 발생: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+"""
 
-        
+
+# 하드웨어에서 영상 받아 객체 감지 및 중복 검사
+class HardwarePull(APIView):
+    def post(self, request):
+        try:
+            print("[INFO] 요청 수신됨. 모델 로드 시작.")
+            model = YOLO("C:/Users/ysyhs/Desktop/jolup/models/yoloV8v4.pt")
+            print("[INFO] 모델 로딩 완료.")
+
+            # 시간 및 파일 경로 설정
+            kst = pytz.timezone('Asia/Seoul')
+            kst_time = datetime.now(kst)
+            filename = kst_time.strftime('%Y%m%d_%H%M%S') + '.jpg'
+            save_dir = os.path.join(settings.MEDIA_ROOT, 'reports')
+            os.makedirs(save_dir, exist_ok=True)
+            save_path = os.path.join(save_dir, filename)
+
+            # 영상 캡처
+            cap = cv2.VideoCapture("http://192.168.0.135:8081/")
+            print(f"[DEBUG] VideoCapture opened: {cap.isOpened()}")
+            ret, frame = cap.read()
+            cap.release()
+            if not ret or frame is None:
+                return Response({"error": "카메라 캡처 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # 요청 데이터 받기
+            lat_lon = request.data.get("lat_lon", "")
+            speed = request.data.get("speed", None)
+            direction = request.data.get("course", None)
+            try:
+                curr_lat, curr_lon = map(float, lat_lon.split(','))
+            except:
+                return Response({"error": "잘못된 좌표 형식"}, status=status.HTTP_400_BAD_REQUEST)
+
+            # 객체 탐지 수행
+            results = model.predict(frame, conf=0.7)[0]
+            detections = results.boxes
+            print(f"[INFO] 감지된 객체 수: {len(detections)}")
+
+            image_path = None
+            detected_types = set()
+            target_class = None
+
+            # 유효 객체 탐지: pothole 또는 crack만 수집
+            if detections is not None and detections.xyxy.shape[0] > 0:
+                for xyxy, conf, cls in zip(detections.xyxy, detections.conf, detections.cls):
+                    class_name = model.names[int(cls)].lower()
+
+                    # 클래스별 임계값 설정
+                    if class_name == "pothole" and conf < 0.8:
+                        continue
+                    if class_name == "crack" and conf < 0.7:
+                        continue
+                    if class_name not in ["pothole", "crack"]:
+                        continue
+
+                    # 바운딩 박스 색상 지정
+                    if class_name == "pothole":
+                        box_color = (0, 0, 255)  # 빨강
+                    elif class_name == "crack":
+                        box_color = (255, 0, 0)  # 파랑
+
+                    x1, y1, x2, y2 = map(int, xyxy)
+                    label = f"{class_name} {conf:.2f}"
+
+                    # 실제 그리기
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), box_color, 2)
+                    cv2.putText(frame, label, (x1, y1 - 10),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.6, box_color, 2)
+
+                    # 기록용
+                    detected_types.add(class_name)
+                    target_class = class_name
+                    image_path = os.path.join('reports', filename)
+
+            # 이미지 저장
+            if image_path:
+                cv2.imwrite(save_path, frame)
+                print(f"[INFO] 이미지 저장됨: {save_path}")
+
+            damage_str = ", ".join(sorted(detected_types)) if detected_types else None
+
+            # 동일 클래스 + 반경 5m 이내 신고 개수 계산
+            count = 0
+            if target_class:
+                similar_reports = RoadReport.objects.filter(
+                    roadreport_damagetype=target_class,
+                    roadreport_latlng__isnull=False
+                )
+                for report in similar_reports:
+                    try:
+                        rep_lat, rep_lon = map(float, report.roadreport_latlng.split(','))
+                        if haversine(curr_lat, curr_lon, rep_lat, rep_lon) <= 5:
+                            count += 1
+                    except:
+                        continue
+
+            # 3건까지는 저장 허용, 4건 이상이면 거부
+            if count >= 3:
+                return Response({"message": f"{target_class} 중복 3건 초과로 저장 차단"}, status=200)
+
+            # DB 저장 (roadreport_count = count + 1)
+            RoadReport.objects.create(
+                roadreport_time=kst_time,
+                roadreport_image=image_path,
+                roadreport_latlng=lat_lon,
+                roadreport_speed=speed,
+                roadreport_direction=direction,
+                roadreport_damagetype=target_class,
+                roadreport_count=count + 1
+            )
+            print("[INFO] DB 저장 완료.")
+
+            return Response({"message": "신고 저장 완료", "file": filename}, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            print(f"[ERROR] 예외 발생: {str(e)}")
+            return Response({"error": f"오류 발생: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+   
 
 def object_detection_stream(request):
-    #stream_url = "http://192.168.0.135:8081/"
-    stream_url = "http://192.168.66.194:8081/"
+    stream_url = "http://192.168.0.135:8081/"
+    #stream_url = "http://192.168.66.194:8081/"
     model = load_yolo_model()
     names = model.model.names  # YOLOv8 클래스 이름 접근
 
@@ -345,13 +474,13 @@ def object_detection_stream(request):
 
             # YOLO 추론 (3프레임마다, 로그 숨김)
             if frame_count % 3 == 0:
-                results = model.predict(source=frame, conf=0.3, verbose=False)[0]
+                results = model.predict(source=frame, conf=0.5, verbose=False)[0]
                 detections = results.boxes.data.cpu().numpy().tolist()
 
             # 감지된 객체 표시
             if detections:
                 for *xyxy, conf, cls in detections:
-                    if len(xyxy) != 4 or conf < 0.3:
+                    if len(xyxy) != 4 or conf < 0.5:
                         continue
                     x1, y1, x2, y2 = map(int, xyxy)
                     class_name = names[int(cls)]
