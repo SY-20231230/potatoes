@@ -36,7 +36,7 @@ class Master(models.Model):
     class Meta:
         db_table = 'Master'
 
-class UserHistory(models.Model):  # 클래스명 변경
+class UserHistory(models.Model):  
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='road_records') 
     userhistory_start = models.CharField(max_length=255,null=True)
     userhistory_end = models.CharField(max_length=255,null=True)
@@ -46,17 +46,18 @@ class UserHistory(models.Model):  # 클래스명 변경
     class Meta:
         db_table = 'userhistory'
 
-class RoadReport(models.Model):  # 클래스명 변경
-    roadreport_num = models.AutoField(primary_key=True)  #새로운 프라이머리 키 설정
+class RoadReport(models.Model):  
+    roadreport_num = models.AutoField(primary_key=True)  
     roadreport_latlng = models.CharField(max_length=100)
     roadreport_image = models.ImageField(upload_to='images/',null=True,blank=True)
     roadreport_damagetype = models.CharField(max_length=50,null=True)
     roadreport_status = models.CharField(max_length=20, null=True, blank=True, default="접수됨")
     roadreport_time = models.DateTimeField(auto_now_add=True,null=True)
-    roadreport_direction = models.FloatField(null=True, blank=True)  # 추가된 필드 (방향)
-    roadreport_speed = models.FloatField(null=True, blank=True)  # 추가된 필드 (속도)
-    
-    
+    roadreport_direction = models.FloatField(null=True, blank=True)  
+    roadreport_speed = models.FloatField(null=True, blank=True)  
+    #roadreport_count = models.Int(null=True,blank=True)
+    roadreport_count = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         db_table = 'roadreport'
 
