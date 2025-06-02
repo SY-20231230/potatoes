@@ -317,6 +317,7 @@ function AdminManage() {
                                         <th className="border-0">파손 유형</th>
                                         <th className="border-0">처리 상태</th>
                                         <th className="border-0">시간</th>
+                                        <th className="border-0">빈도</th>
                                         <th className="border-0">e.t.c</th>
                                     </tr>
                                     </thead>
@@ -367,6 +368,7 @@ function AdminManage() {
                                                     </Dropdown>
                                                 </td>
                                                 <td className="time">{road.ymd + " " + road.hms}</td>
+                                                <td className="count">{road.roadreport_count}</td>
                                                 <td className="edit">
                                                     <button
                                                         onClick={(() => openLocationModal(road.roadreport_latlng))}>위치
