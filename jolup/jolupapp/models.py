@@ -61,6 +61,12 @@ class RoadReport(models.Model):
     roadreport_speed = models.FloatField(null=True, blank=True)  
     #roadreport_count = models.Int(null=True,blank=True)
     roadreport_count = models.PositiveIntegerField(null=True, blank=True)
+    sido = models.CharField(max_length=50, blank=True, null=True)
+    sigungu = models.CharField(max_length=50, blank=True, null=True)
+    detail_address = models.CharField(max_length=255, blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+
 
     class Meta:
         db_table = 'roadreport'
